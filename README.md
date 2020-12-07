@@ -1,3 +1,3 @@
 # BP Logger
 
-Logs BP values in a `log.cvs` file
+Logs BP values in a `log.csv` file

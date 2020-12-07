@@ -24,8 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.16.1 # For datetime stuff
-  path_provider: ^1.6.24 # For getting iOS external storage
-  ext_storage: ^1.0.3 # For getting android external storage
+  path_provider: ^1.6.24 # For getting external storage path
   permission_handler: ^5.0.1+1
 
   # The following adds the Cupertino Icons font to your application.

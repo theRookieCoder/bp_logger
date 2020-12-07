@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart'; // Duh
 import 'package:intl/intl.dart'; // To get date and time
-import 'package:path_provider/path_provider.dart'; // For iOS external storage
-import 'package:ext_storage/ext_storage.dart'; // For Android external storage
+import 'package:path_provider/path_provider.dart'; // For external storage
 import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission
 import 'dart:io'; // For actual file reading and writing
+import 'package:bp_logger/ErrorDialog.dart'; // For error dialog cause alert dialogs are long and annoying
 
 void main() {
   runApp(MyApp());
@@ -15,7 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BP Logger',
-      theme: ThemeData(),
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
       darkTheme: ThemeData.dark(),
       home: RouteSplash(title: 'BP Logger'),
     );
@@ -34,7 +36,7 @@ class _RouteSplashState extends State<RouteSplash> {
   bool shouldProceed = false;
 
   _askPermission() async {
-    await Permission.storage.request();// dummy code showing the wait period while getting the preferences
+    await Permission.storage.request();// Wait for user to accept
     setState(() {
       shouldProceed = true;//got the prefs; set to some value if needed
     });
@@ -46,8 +48,6 @@ class _RouteSplashState extends State<RouteSplash> {
     _askPermission();//running initialisation code; getting prefs etc.
   }
 
-  int diastolic;
-  int systolic;
   String date = new DateFormat('d/M/y').format(DateTime.now());
   String time = new DateFormat('H:m').format(DateTime.now());
   var textFieldController1 = TextEditingController();
@@ -57,11 +57,11 @@ class _RouteSplashState extends State<RouteSplash> {
     String directoryPath;
 
     if (Platform.isAndroid) {
-      directoryPath = await ExtStorage.getExternalStoragePublicDirectory(
-          ExtStorage.DIRECTORY_DOCUMENTS);
+      final directory = await getExternalStorageDirectory();
+      directoryPath = directory.path;
     } else if (Platform.isIOS) {
       final directory = await getApplicationDocumentsDirectory();
-      directoryPath = directory.path;
+      directoryPath = directory.path; // For iOS you can configure the documents directory to be viewable by the user
     }
     return directoryPath;
   }
@@ -110,9 +110,6 @@ class _RouteSplashState extends State<RouteSplash> {
                   ),
                   hintText: 'Diastolic'
                 ),
-                onChanged: (text) {
-                  diastolic = int.parse(text);
-                },
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -129,9 +126,6 @@ class _RouteSplashState extends State<RouteSplash> {
                   ),
                   hintText: 'Systolic'
                 ),
-                onChanged: (text) {
-                  systolic = int.parse(text);
-                },
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -144,7 +138,10 @@ class _RouteSplashState extends State<RouteSplash> {
         backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         onPressed: () async {
-          if (diastolic != null || systolic != null) {
+          String diastolic = textFieldController1.text;
+          String systolic = textFieldController2.text;
+
+          if (diastolic != "" && systolic != "") {
             final path = await _localPath;
             String row = "$date, $time, $diastolic, $systolic\n";
             print("Appending: $row");
@@ -152,6 +149,12 @@ class _RouteSplashState extends State<RouteSplash> {
               await writeRow(row);
             } on FileSystemException {
               print("Permission denied");
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ErrorDialog();
+                },
+              );
               return;
             }
             textFieldController1.clear();

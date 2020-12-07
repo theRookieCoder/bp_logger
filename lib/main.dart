@@ -1,5 +1,6 @@
 import 'package:bp_logger/FileLocation.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // To get date and time
 import 'package:path_provider/path_provider.dart'; // To get external storage path
 import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission if denied
@@ -44,8 +45,9 @@ class _RouteSplashState extends State<RouteSplash> {
     _askPermission();//running initialisation code; getting prefs etc.
   }
 
-  String date = new DateFormat('d/M/y').format(DateTime.now());
-  String time = new DateFormat('H:m').format(DateTime.now());
+  static DateTime date = new DateTime.now();
+  String dateString = new DateFormat("d/M/y").format(date);
+  String time = new DateFormat.Hm().format(DateTime.now());
   var textFieldController1 = TextEditingController();
   var textFieldController2 = TextEditingController();
 
@@ -76,6 +78,19 @@ class _RouteSplashState extends State<RouteSplash> {
     return file.writeAsString(row, mode: FileMode.append);
   }
 
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: date,
+      firstDate: DateTime(2015),
+      lastDate: DateTime(3000),
+    );
+    if (picked != null && picked != date)
+      setState(() {
+        date = picked;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,9 +115,29 @@ class _RouteSplashState extends State<RouteSplash> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(date, style: Theme.of(context).textTheme.headline3),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+                Opacity(
+                  opacity: 0.0,
+                  child: IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: 40.0,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(dateString, style: Theme.of(context).textTheme.headline3),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  iconSize: 40.0,
+                  onPressed: () async {
+                    await _selectDate(context);
+                    dateString = DateFormat("d/M/y").format(date);
+                  },
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(5.0),
@@ -121,7 +156,11 @@ class _RouteSplashState extends State<RouteSplash> {
                   ),
                   hintText: 'Diastolic'
                 ),
-                keyboardType: TextInputType.number,
+                // Allow strictly numbers only
+                inputFormatters: <TextInputFormatter> [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
               ),
             ),
             Padding(
@@ -137,7 +176,11 @@ class _RouteSplashState extends State<RouteSplash> {
                   ),
                   hintText: 'Systolic'
                 ),
-                keyboardType: TextInputType.number,
+                // Allow strictly numbers only
+                inputFormatters: <TextInputFormatter> [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
               ),
             ),
           ],

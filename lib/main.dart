@@ -1,16 +1,16 @@
+import 'package:bp_logger/FileLocation.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
 import 'package:intl/intl.dart'; // To get date and time
-import 'package:path_provider/path_provider.dart'; // For external storage
-import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission
-import 'dart:io'; // For actual file reading and writing
-import 'package:bp_logger/ErrorDialog.dart'; // For error dialog cause alert dialogs are long and annoying
+import 'package:path_provider/path_provider.dart'; // To get external storage path
+import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission if denied
+import 'dart:io'; // For actual file input/output support
+import 'package:bp_logger/ErrorDialog.dart'; // For error dialog because alert dialogs are long and annoying in flutter
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,13 +33,9 @@ class RouteSplash extends StatefulWidget {
 }
 
 class _RouteSplashState extends State<RouteSplash> {
-  bool shouldProceed = false;
 
   _askPermission() async {
     await Permission.storage.request();// Wait for user to accept
-    setState(() {
-      shouldProceed = true;//got the prefs; set to some value if needed
-    });
   }
 
   @override
@@ -57,11 +53,13 @@ class _RouteSplashState extends State<RouteSplash> {
     String directoryPath;
 
     if (Platform.isAndroid) {
+      // For Android you have to use this specific directory to avoid permission errors
       final directory = await getExternalStorageDirectory();
       directoryPath = directory.path;
     } else if (Platform.isIOS) {
+      // For iOS you can configure the app documents directory to be viewable by the user
       final directory = await getApplicationDocumentsDirectory();
-      directoryPath = directory.path; // For iOS you can configure the documents directory to be viewable by the user
+      directoryPath = directory.path;
     }
     return directoryPath;
   }
@@ -84,6 +82,19 @@ class _RouteSplashState extends State<RouteSplash> {
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return FileLocation();
+                  },
+                );
+              },
+          )
+        ],
       ),
       body: Center(
         child: Column(
@@ -102,7 +113,7 @@ class _RouteSplashState extends State<RouteSplash> {
               child: TextField(
                 controller: textFieldController1,
                 style: TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 25.0,
                 ),
                 decoration: InputDecoration(
                   border: new OutlineInputBorder(
@@ -118,7 +129,7 @@ class _RouteSplashState extends State<RouteSplash> {
               child: TextField(
                 controller: textFieldController2,
                 style: TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 25.0,
                 ),
                 decoration: InputDecoration(
                   border: new OutlineInputBorder(

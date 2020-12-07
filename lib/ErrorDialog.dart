@@ -25,7 +25,7 @@ class _ErrorDialogState extends State<ErrorDialog> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text("We could not write to the file. " +
+          Text("We could not write to the log file. " +
               "This is most likely due to the app not having storage permissions. " +
               "To fix this, search for BP Logger in settings and under storage permissions, select allow"
           ),

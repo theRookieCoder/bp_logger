@@ -34,22 +34,24 @@ class RouteSplash extends StatefulWidget {
 }
 
 class _RouteSplashState extends State<RouteSplash> {
+  String time;
 
   _askPermission() async {
-    await Permission.storage.request();// Wait for user to accept
+    await Permission.storage.request(); // Wait for user to accept
+    time = new DateFormat.Hm().format(DateTime.now()); // Time is updated every the time app is opened
   }
 
   @override
   void initState() {
     super.initState();
-    _askPermission();//running initialisation code; getting prefs etc.
+    _askPermission(); // Asks user for storage permission if the user hasn't accepted yet
   }
 
-  static DateTime date = new DateTime.now();
-  String dateString = new DateFormat("d/M/y").format(date);
-  String time = new DateFormat.Hm().format(DateTime.now());
-  var textFieldController1 = TextEditingController();
-  var textFieldController2 = TextEditingController();
+  static DateTime date = new DateTime.now(); // date var gets changed by DatePicker
+  String dateString = new DateFormat("d/M/y").format(date); // dateString gets updated every time date changes
+  var textFieldController1 = TextEditingController(); // Control TextField diastolic
+  var textFieldController2 = TextEditingController(); // Control TextField systolic
+  // This snackbar shows when the file has successfully been written to
   final snackBar = SnackBar(
     backgroundColor: Colors.grey[800],
     behavior: SnackBarBehavior.floating,
@@ -61,11 +63,11 @@ class _RouteSplashState extends State<RouteSplash> {
     String directoryPath;
 
     if (Platform.isAndroid) {
-      // For Android you have to use this specific directory to avoid permission errors
+      // For Android you have to use this specific directory to avoid permission (OS13) errors
       final directory = await getExternalStorageDirectory();
       directoryPath = directory.path;
     } else if (Platform.isIOS) {
-      // For iOS you can configure the app documents directory to be viewable by the user
+      // For iOS you can configure the app documents directory to be viewable by the user (in Minecraft for example)
       final directory = await getApplicationDocumentsDirectory();
       directoryPath = directory.path;
     }
@@ -80,7 +82,7 @@ class _RouteSplashState extends State<RouteSplash> {
   Future<File> writeRow(String row) async {
     final file = await _localFile;
 
-    // Write the file.
+    // Append to the file to not overwrite any existing data
     return file.writeAsString(row, mode: FileMode.append);
   }
 
@@ -91,7 +93,7 @@ class _RouteSplashState extends State<RouteSplash> {
       firstDate: DateTime(2015),
       lastDate: DateTime(3000),
     );
-    if (picked != null && picked != date)
+    if (picked != null && picked != date) // Only update if user picked and isn't the same as before
       setState(() {
         date = picked;
       });
@@ -110,7 +112,7 @@ class _RouteSplashState extends State<RouteSplash> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) {
+                  builder: (BuildContext context) { // custom builder for calling Navigator.pop()
                     return FileLocation();
                   },
                 );
@@ -125,6 +127,7 @@ class _RouteSplashState extends State<RouteSplash> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
+                // Invisible button of same size to make the Text centered
                 Opacity(
                   opacity: 0.0,
                   child: IconButton(
@@ -134,21 +137,21 @@ class _RouteSplashState extends State<RouteSplash> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(dateString, style: Theme.of(context).textTheme.headline3),
+                  child: Text(dateString, style: Theme.of(context).textTheme.headline3), // Show date
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),
                   iconSize: 40.0,
                   onPressed: () async {
                     await _selectDate(context);
-                    dateString = DateFormat("d/M/y").format(date);
+                    dateString = DateFormat("d/M/y").format(date); // Edit button beside date to change date (default today)
                   },
                 ),
               ],
             ),
             Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text(time, style: Theme.of(context).textTheme.headline3),
+              child: Text(time, style: Theme.of(context).textTheme.headline3), // Show time
             ),
             Padding(
               padding: const EdgeInsets.all(5.0),
@@ -165,9 +168,9 @@ class _RouteSplashState extends State<RouteSplash> {
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter> [
-                  FilteringTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even if typed in
                 ],
-                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
+                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
               ),
             ),
             Padding(
@@ -185,9 +188,9 @@ class _RouteSplashState extends State<RouteSplash> {
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter> [
-                  FilteringTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even of typed in
                 ],
-                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
+                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
               ),
             ),
           ],
@@ -203,9 +206,9 @@ class _RouteSplashState extends State<RouteSplash> {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;
 
-            if (diastolic != "" && systolic != "") {
+            if (diastolic != "" && systolic != "") { // Only run if both fields are filled in
               final path = await _localPath;
-              String row = "$date, $time, $diastolic, $systolic\n";
+              String row = "$dateString, $time, $diastolic, $systolic\n";
               print("Appending: $row");
               try {
                 await writeRow(row);
@@ -214,14 +217,15 @@ class _RouteSplashState extends State<RouteSplash> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return ErrorDialog();
+                    return ErrorDialog(); // Show ErrorDialog if append was unsuccessful
                   },
                 );
                 return;
               }
+              // Clear both TextFields after
               textFieldController1.clear();
               textFieldController2.clear();
-              Scaffold.of(context).showSnackBar(snackBar);
+              Scaffold.of(context).showSnackBar(snackBar); // Show SnackBar
               print("Appended successfully to $path/log.csv");
             }
           },

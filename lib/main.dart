@@ -34,11 +34,10 @@ class RouteSplash extends StatefulWidget {
 }
 
 class _RouteSplashState extends State<RouteSplash> {
-  String time;
+  String time = new DateFormat.Hm().format(DateTime.now()); // Time is determined whenever app is launched
 
   _askPermission() async {
     await Permission.storage.request(); // Wait for user to accept
-    time = new DateFormat.Hm().format(DateTime.now()); // Time is updated every the time app is opened
   }
 
   @override
@@ -51,6 +50,7 @@ class _RouteSplashState extends State<RouteSplash> {
   String dateString = new DateFormat("d/M/y").format(date); // dateString gets updated every time date changes
   var textFieldController1 = TextEditingController(); // Control TextField diastolic
   var textFieldController2 = TextEditingController(); // Control TextField systolic
+
   // This snackbar shows when the file has successfully been written to
   final snackBar = SnackBar(
     backgroundColor: Colors.grey[800],

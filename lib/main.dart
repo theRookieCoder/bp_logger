@@ -171,6 +171,11 @@ class _RouteSplashState extends State<RouteSplash> {
                   FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even if typed in
                 ],
                 keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
+                onChanged: (text) {
+                  setState(() {
+                    time = new DateFormat.Hm().format(DateTime.now());
+                  });
+                },
               ),
             ),
             Padding(
@@ -191,6 +196,11 @@ class _RouteSplashState extends State<RouteSplash> {
                   FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even of typed in
                 ],
                 keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
+                onChanged: (text) {
+                  setState(() {
+                    time = new DateFormat.Hm().format(DateTime.now());
+                  });
+                },
               ),
             ),
           ],

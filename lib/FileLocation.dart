@@ -24,7 +24,7 @@ class _FileLocationState extends State<FileLocation> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text("For Android, your log file is located in\n/storage/emulated/0/Android/com.therookiecoder.bp_logger/log.csv\n" +
+          Text("For Android, your log file is located in\n/storage/emulated/0/Android/data/com.therookiecoder.bp_logger/files/log.csv\n" +
               "Use a file explorer app like Google Files from the Playstore.\n" +
               "\nFor iOS, go to the Files app, then go to Browse, On My iPhone/iPad, bp_logger, log.csv"
           ),

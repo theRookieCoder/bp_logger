@@ -50,6 +50,12 @@ class _RouteSplashState extends State<RouteSplash> {
   String time = new DateFormat.Hm().format(DateTime.now());
   var textFieldController1 = TextEditingController();
   var textFieldController2 = TextEditingController();
+  final snackBar = SnackBar(
+    backgroundColor: Colors.grey[800],
+    behavior: SnackBarBehavior.floating,
+    content: Text("Successfully wrote to log file", style: TextStyle(color: Colors.white)),
+    duration: Duration(seconds: 2),
+  );
 
   Future<String> get _localPath async {
     String directoryPath;
@@ -100,6 +106,7 @@ class _RouteSplashState extends State<RouteSplash> {
         actions: [
           IconButton(
               icon: Icon(Icons.info_outline),
+              tooltip: "Location of log file",
               onPressed: () {
                 showDialog(
                   context: context,
@@ -186,36 +193,39 @@ class _RouteSplashState extends State<RouteSplash> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.add_box_rounded),
-        label: Text("ADD TO LOGS"),
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        onPressed: () async {
-          String diastolic = textFieldController1.text;
-          String systolic = textFieldController2.text;
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton.extended(
+          icon: Icon(Icons.add_box_rounded),
+          label: Text("ADD TO LOGS"),
+          backgroundColor: Colors.teal,
+          foregroundColor: Colors.white,
+          onPressed: () async {
+            String diastolic = textFieldController1.text;
+            String systolic = textFieldController2.text;
 
-          if (diastolic != "" && systolic != "") {
-            final path = await _localPath;
-            String row = "$date, $time, $diastolic, $systolic\n";
-            print("Appending: $row");
-            try {
-              await writeRow(row);
-            } on FileSystemException {
-              print("Permission denied");
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ErrorDialog();
-                },
-              );
-              return;
+            if (diastolic != "" && systolic != "") {
+              final path = await _localPath;
+              String row = "$date, $time, $diastolic, $systolic\n";
+              print("Appending: $row");
+              try {
+                await writeRow(row);
+              } on FileSystemException {
+                print("Permission denied");
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ErrorDialog();
+                  },
+                );
+                return;
+              }
+              textFieldController1.clear();
+              textFieldController2.clear();
+              Scaffold.of(context).showSnackBar(snackBar);
+              print("Appended successfully to $path/log.csv");
             }
-            textFieldController1.clear();
-            textFieldController2.clear();
-            print("Appended successfully to $path/log.csv");
-          }
-        },
+          },
+        ),
       ),
     );
   }

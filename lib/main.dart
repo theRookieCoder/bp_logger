@@ -1,4 +1,4 @@
-import 'package:bp_logger/FileLocation.dart'; // Dialog for information about file location
+import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
 import 'package:flutter/services.dart'; // For rejecting everything but digits in TextField
 import 'package:intl/intl.dart'; // To get date and time
@@ -20,10 +20,12 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: Colors.lightBlue,
         accentColor: Colors.lightBlueAccent,
+        fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         accentColor: Colors.lightBlueAccent,
+        fontFamily: 'Roboto',
       ),
       home: RouteSplash(title: 'BP Logger'),
     );
@@ -117,7 +119,7 @@ class _RouteSplashState extends State<RouteSplash> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) { // custom builder for calling Navigator.pop()
-                    return FileLocation();
+                    return FileLocationDialog();
                   },
                 );
               },
@@ -214,8 +216,6 @@ class _RouteSplashState extends State<RouteSplash> {
         builder: (context) => FloatingActionButton.extended(
           icon: Icon(Icons.add_box_rounded),
           label: Text("ADD TO LOGS"),
-          backgroundColor: Colors.lightBlueAccent,
-          foregroundColor: Colors.black,
           onPressed: () async {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;

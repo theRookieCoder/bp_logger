@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
-class FileLocation extends StatefulWidget {
+class FileLocationDialog extends StatefulWidget {
   @override
-  _FileLocationState createState() => _FileLocationState();
+  _FileLocationDialogState createState() => _FileLocationDialogState();
 }
 
-class _FileLocationState extends State<FileLocation> {
+class _FileLocationDialogState extends State<FileLocationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      /*
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
           Radius.circular(25),
         ),
       ),
+      */
       title: Text(
         'Log file location',
         textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20.0),
+        style: Theme.of(context).textTheme.headline4,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -26,13 +28,17 @@ class _FileLocationState extends State<FileLocation> {
         children: <Widget>[
           Text("For Android, your log file is located in\n/storage/emulated/0/Android/data/com.therookiecoder.bp_logger/files/log.csv\n" +
               "Use a file explorer app like Google Files from the Playstore.\n" +
-              "\nFor iOS, go to the Files app, then go to Browse, On My iPhone/iPad, bp_logger, log.csv"
+              "\nFor iOS, go to the Files app, then go to Browse, On My iPhone/iPad, bp_logger, log.csv",
+            style: Theme.of(context).textTheme.subtitle1,
           ),
-          TextButton(
+          OutlinedButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("OK"),
+            child: Text(
+              "OK",
+              style: TextStyle(fontSize: 18),
+            ),
           )
         ],
       ),

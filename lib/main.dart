@@ -1,11 +1,11 @@
 import 'package:bp_logger/FileLocation.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // For rejecting everything but digits in TextField
 import 'package:intl/intl.dart'; // To get date and time
-import 'package:path_provider/path_provider.dart'; // To get external storage path
-import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission if denied
-import 'dart:io'; // For actual file input/output support
-import 'package:bp_logger/ErrorDialog.dart'; // For error dialog because alert dialogs are long and annoying in flutter
+import 'package:path_provider/path_provider.dart'; // To get storage path
+import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission
+import 'dart:io'; // For file read and write
+import 'package:bp_logger/ErrorDialog.dart'; // Dialog for write error
 
 void main() {
   runApp(MyApp());
@@ -17,9 +17,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'BP Logger',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+        brightness: Brightness.light,
+        primaryColor: Colors.lightBlue,
+        accentColor: Colors.lightBlueAccent,
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        accentColor: Colors.lightBlueAccent,
+      ),
       home: RouteSplash(title: 'BP Logger'),
     );
   }
@@ -103,7 +108,6 @@ class _RouteSplashState extends State<RouteSplash> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
         title: Text(widget.title),
         actions: [
           IconButton(
@@ -162,7 +166,7 @@ class _RouteSplashState extends State<RouteSplash> {
                 ),
                 decoration: InputDecoration(
                   border: new OutlineInputBorder(
-                    borderSide: new BorderSide()
+                    borderSide: new BorderSide(color: Colors.lightBlue)
                   ),
                   hintText: 'Diastolic'
                 ),
@@ -187,7 +191,7 @@ class _RouteSplashState extends State<RouteSplash> {
                 ),
                 decoration: InputDecoration(
                   border: new OutlineInputBorder(
-                    borderSide: new BorderSide()
+                    borderSide: new BorderSide(),
                   ),
                   hintText: 'Systolic'
                 ),
@@ -210,8 +214,8 @@ class _RouteSplashState extends State<RouteSplash> {
         builder: (context) => FloatingActionButton.extended(
           icon: Icon(Icons.add_box_rounded),
           label: Text("ADD TO LOGS"),
-          backgroundColor: Colors.teal,
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.lightBlueAccent,
+          foregroundColor: Colors.black,
           onPressed: () async {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;

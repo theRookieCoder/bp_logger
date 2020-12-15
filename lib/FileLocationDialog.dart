@@ -26,18 +26,20 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text("For Android, your log file is located in\n/storage/emulated/0/Android/data/com.therookiecoder.bp_logger/files/log.csv\n" +
-              "Use a file explorer app like Google Files from the Playstore.\n" +
-              "\nFor iOS, go to the Files app, then go to Browse, On My iPhone/iPad, bp_logger, log.csv",
+          Text(
+            "Open Google Drive, go to My Drive, then BP Logger folder. Then open the file called log to see data.\nMake sure you are signed into the same Google account that you used in BP Logger",
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              "OK",
-              style: TextStyle(fontSize: 18),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                "OK",
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           )
         ],

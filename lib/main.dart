@@ -2,10 +2,9 @@ import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information ab
 import 'package:flutter/material.dart'; // Duh
 import 'package:flutter/services.dart'; // For rejecting everything but digits in TextField
 import 'package:intl/intl.dart'; // To get date and time
-import 'package:path_provider/path_provider.dart'; // To get storage path
-import 'package:permission_handler/permission_handler.dart'; // Ask for storage permission
-import 'dart:io'; // For file read and write
-import 'package:bp_logger/ErrorDialog.dart'; // Dialog for write error
+import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
+import 'package:googleapis/drive/v3.dart' as drive; // Google Drive API
+
 
 void main() {
   runApp(MyApp());
@@ -14,17 +13,18 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); // Manually set via Xcode for iOS
     return MaterialApp(
       title: 'BP Logger',
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.lightBlue,
-        accentColor: Colors.lightBlueAccent,
+        primaryColor: Colors.blue,
+        accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        accentColor: Colors.lightBlueAccent,
+        accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
       home: RouteSplash(title: 'BP Logger'),
@@ -42,15 +42,17 @@ class RouteSplash extends StatefulWidget {
 
 class _RouteSplashState extends State<RouteSplash> {
   String time = new DateFormat.Hm().format(DateTime.now()); // Time is determined whenever app is launched
+  drive.DriveApi driveApi;
+  bool isLoading = false;
 
-  _askPermission() async {
-    await Permission.storage.request(); // Wait for user to accept
+  _instantiateApi() async {
+    driveApi = await DriveAbstraction.createDriveApi();
   }
 
   @override
   void initState() {
     super.initState();
-    _askPermission(); // Asks user for storage permission if the user hasn't accepted yet
+    _instantiateApi(); // Asks user for storage permission if the user hasn't accepted yet
   }
 
   static DateTime date = new DateTime.now(); // date var gets changed by DatePicker
@@ -58,40 +60,13 @@ class _RouteSplashState extends State<RouteSplash> {
   var textFieldController1 = TextEditingController(); // Control TextField diastolic
   var textFieldController2 = TextEditingController(); // Control TextField systolic
 
-  // This snackbar shows when the file has successfully been written to
+  // This snackbar pops up when the file has successfully been written to
   final snackBar = SnackBar(
     backgroundColor: Colors.grey[800],
     behavior: SnackBarBehavior.floating,
     content: Text("Successfully wrote to log file", style: TextStyle(color: Colors.white)),
     duration: Duration(seconds: 2),
   );
-
-  Future<String> get _localPath async {
-    String directoryPath;
-
-    if (Platform.isAndroid) {
-      // For Android you have to use this specific directory to avoid permission (OS13) errors
-      final directory = await getExternalStorageDirectory();
-      directoryPath = directory.path;
-    } else if (Platform.isIOS) {
-      // For iOS you can configure the app documents directory to be viewable by the user (in Minecraft for example)
-      final directory = await getApplicationDocumentsDirectory();
-      directoryPath = directory.path;
-    }
-    return directoryPath;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/log.csv');
-  }
-
-  Future<File> writeRow(String row) async {
-    final file = await _localFile;
-
-    // Append to the file to not overwrite any existing data
-    return file.writeAsString(row, mode: FileMode.append);
-  }
 
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -110,6 +85,13 @@ class _RouteSplashState extends State<RouteSplash> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: Size(double.infinity, 0.0),
+          child: Opacity(
+            opacity: isLoading ? 1.0 : 0.0,
+            child: LinearProgressIndicator(),
+          ),
+        ),
         title: Text(widget.title),
         actions: [
           IconButton(
@@ -136,7 +118,7 @@ class _RouteSplashState extends State<RouteSplash> {
                 // Invisible button of same size to make the Text centered
                 Opacity(
                   opacity: 0.0,
-                  child: IconButton(
+                  child: IconButton( // onPressed removed to make this not pressable
                     icon: Icon(Icons.edit),
                     iconSize: 40.0,
                   ),
@@ -162,6 +144,8 @@ class _RouteSplashState extends State<RouteSplash> {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextField(
+                maxLength: 3,
+                textInputAction: TextInputAction.done,
                 controller: textFieldController1,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -170,7 +154,7 @@ class _RouteSplashState extends State<RouteSplash> {
                   border: new OutlineInputBorder(
                     borderSide: new BorderSide(color: Colors.lightBlue)
                   ),
-                  hintText: 'Diastolic'
+                  labelText: 'Diastolic'
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter> [
@@ -187,6 +171,8 @@ class _RouteSplashState extends State<RouteSplash> {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextField(
+                maxLength: 3,
+                textInputAction: TextInputAction.done,
                 controller: textFieldController2,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -195,7 +181,7 @@ class _RouteSplashState extends State<RouteSplash> {
                   border: new OutlineInputBorder(
                     borderSide: new BorderSide(),
                   ),
-                  hintText: 'Systolic'
+                  labelText: 'Systolic'
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter> [
@@ -220,27 +206,25 @@ class _RouteSplashState extends State<RouteSplash> {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;
 
-            if (diastolic != "" && systolic != "") { // Only run if both fields are filled in
-              final path = await _localPath;
-              String row = "$dateString, $time, $diastolic, $systolic\n";
-              print("Appending: $row");
-              try {
-                await writeRow(row);
-              } on FileSystemException {
-                print("Permission denied");
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ErrorDialog(); // Show ErrorDialog if append was unsuccessful
-                  },
-                );
-                return;
-              }
-              // Clear both TextFields after
+            if (diastolic != "" && systolic != "") {
+              setState(() {
+                isLoading = true;
+              });
+              await DriveAbstraction.init(driveApi);
+              String text = "$dateString, $time, $diastolic, $systolic";
+
+              await DriveAbstraction.appendToFile(
+                driveApi,
+                DriveAbstraction.logFileID,
+                text,
+              );
+
+              setState(() {
+                isLoading = false;
+              });
+              Scaffold.of(context).showSnackBar(snackBar);
               textFieldController1.clear();
               textFieldController2.clear();
-              Scaffold.of(context).showSnackBar(snackBar); // Show SnackBar
-              print("Appended successfully to $path/log.csv");
             }
           },
         ),

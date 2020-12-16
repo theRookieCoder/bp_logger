@@ -26,6 +26,8 @@ dependencies:
   intl: ^0.16.1 # For datetime stuff
   googleapis: ^0.56.1
   google_sign_in: ^4.5.6
+  firebase_core: ^0.4.0+9
+  firebase_auth: ^0.14.0+5
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,6 +42,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: JetBrainsMono
+      fonts:
+        - asset: fonts/JetBrainsMono-VariableFont_wght.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

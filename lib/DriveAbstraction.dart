@@ -2,7 +2,6 @@ import 'package:google_sign_in/google_sign_in.dart' as signIn; // For signing in
 import 'package:googleapis/drive/v3.dart' as drive; // For accessing Google Drive
 import 'GoogleAuthClient.dart';
 import 'dart:convert';
-import 'dart:async';
 
 class DriveAbstraction {
   static String logFileID;
@@ -25,7 +24,6 @@ class DriveAbstraction {
   }
 
   static Future<void> init(drive.DriveApi driveApi) async {// IDs of the app's folder and the log file
-
     if (await getFileId(driveApi, "BP Logger") == null) {
       print("BP Logger app folder not found. Creating BP Logger in root...");
       var driveFolder = new drive.File();
@@ -63,17 +61,13 @@ class DriveAbstraction {
     return search.files[0].id;
   }
 
-  static Future<void> appendToFile(drive.DriveApi driveApi, String fileID, String text) async {
+  static Future<List<List<int>>> getFileData(drive.DriveApi driveApi, String fileID) async {
     drive.Media fileMedia = await driveApi.files.export(fileID, "text/csv", downloadOptions: drive.DownloadOptions.FullMedia); // Get contents of Google Docs file
     final dataStreamList = await fileMedia.stream.toList(); // Receive Stream as List
-    List<int> filteredDataStreamList = [];
+    return dataStreamList;
+  }
 
-    for (var i in dataStreamList) {
-      for (var j in i) {
-        filteredDataStreamList.add(j);
-      }
-    }
-    print(filteredDataStreamList);
+  static Future<void> appendToFile(drive.DriveApi driveApi, String fileID, String text, List<int> filteredDataStreamList) async {
 
     final dataString = ascii.decode(filteredDataStreamList); // Decode List<int> to String
 
@@ -81,6 +75,5 @@ class DriveAbstraction {
     Stream<List<int>> mediaStream = Future.value(List.from(ascii.encode("$dataString\n$text")).cast<int>().toList()).asStream().asBroadcastStream(); // Add existing data and new text data then make into a Stream<List<int>>
     var media = new drive.Media(mediaStream, dataString.length + text.length + "\n".length); // Make mediaStream into drive.Media
     await driveApi.files.update(placeholder, logFileID, uploadMedia: media); // Update existing file with new data
-    print("Successfully wrote:\n$dataString $text");
   }
 }

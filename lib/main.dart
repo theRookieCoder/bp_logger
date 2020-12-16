@@ -1,5 +1,6 @@
 import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart'; // For rejecting everything but digits in TextField
 import 'package:intl/intl.dart'; // To get date and time
 import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
@@ -44,6 +45,7 @@ class _RouteSplashState extends State<RouteSplash> {
   String time = new DateFormat.Hm().format(DateTime.now()); // Time is determined whenever app is launched
   drive.DriveApi driveApi;
   bool isLoading = false;
+  String loadingText = "";
 
   _instantiateApi() async {
     driveApi = await DriveAbstraction.createDriveApi();
@@ -52,7 +54,7 @@ class _RouteSplashState extends State<RouteSplash> {
   @override
   void initState() {
     super.initState();
-    _instantiateApi(); // Asks user for storage permission if the user hasn't accepted yet
+    _instantiateApi(); // Sign in to Google and create a Drive API instace
   }
 
   static DateTime date = new DateTime.now(); // date var gets changed by DatePicker
@@ -89,22 +91,22 @@ class _RouteSplashState extends State<RouteSplash> {
           preferredSize: Size(double.infinity, 0.0),
           child: Opacity(
             opacity: isLoading ? 1.0 : 0.0,
-            child: LinearProgressIndicator(),
+            child:  LinearProgressIndicator(),
           ),
         ),
         title: Text(widget.title),
         actions: [
           IconButton(
-              icon: Icon(Icons.info_outline),
-              tooltip: "Location of log file",
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) { // custom builder for calling Navigator.pop()
-                    return FileLocationDialog();
-                  },
-                );
-              },
+            icon: Icon(Icons.info_outline),
+            tooltip: "Location of log file",
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) { // custom builder for closing dialog
+                  return FileLocationDialog();
+                },
+              );
+            },
           )
         ],
       ),
@@ -121,6 +123,7 @@ class _RouteSplashState extends State<RouteSplash> {
                   child: IconButton( // onPressed removed to make this not pressable
                     icon: Icon(Icons.edit),
                     iconSize: 40.0,
+                    onPressed: null,
                   ),
                 ),
                 Padding(
@@ -145,7 +148,6 @@ class _RouteSplashState extends State<RouteSplash> {
               padding: const EdgeInsets.all(5.0),
               child: TextField(
                 maxLength: 3,
-                textInputAction: TextInputAction.done,
                 controller: textFieldController1,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -172,7 +174,6 @@ class _RouteSplashState extends State<RouteSplash> {
               padding: const EdgeInsets.all(5.0),
               child: TextField(
                 maxLength: 3,
-                textInputAction: TextInputAction.done,
                 controller: textFieldController2,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -206,26 +207,57 @@ class _RouteSplashState extends State<RouteSplash> {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;
 
-            if (diastolic != "" && systolic != "") {
+            // Dismiss keyboard
+            FocusScopeNode currentFocus = FocusScope.of(context);
+
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+
+            // if (diastolic != "" && systolic != "") {
               setState(() {
                 isLoading = true;
+                loadingText = "Getting file IDs";
               });
+
               await DriveAbstraction.init(driveApi);
+
               String text = "$dateString, $time, $diastolic, $systolic";
 
+              List<int> filteredDataStreamList = [];
+              setState(() {
+                loadingText = "Getting file data";
+              });
+              final dataStreamList = await DriveAbstraction.getFileData(driveApi, DriveAbstraction.logFileID);
+
+              setState(() {
+                loadingText = "Filtering file data";
+              });
+              for (var i in dataStreamList) {
+                for (var j in i) {
+                  filteredDataStreamList.add(j);
+                }
+              }
+              print(filteredDataStreamList);
+
+              setState(() {
+                loadingText = "Updating file";
+              });
               await DriveAbstraction.appendToFile(
                 driveApi,
                 DriveAbstraction.logFileID,
                 text,
+                filteredDataStreamList,
               );
 
               setState(() {
                 isLoading = false;
+                loadingText = "";
               });
               Scaffold.of(context).showSnackBar(snackBar);
               textFieldController1.clear();
               textFieldController2.clear();
-            }
+            // }
           },
         ),
       ),

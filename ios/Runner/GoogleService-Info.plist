@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>732045653207-k60g97899cmed958fn5j3jf4st316190.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.732045653207-k60g97899cmed958fn5j3jf4st316190</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>732045653207-srml9ttssv3t9d41k9mnbaf2q7c20o94.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAU2rO9QcoqzrALf4ytdzYqV32WljE1kJ8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>732045653207</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.therookiecoder.bpLogger</string>
+	<key>PROJECT_ID</key>
+	<string>bp-logger-rookie-coder</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bp-logger-rookie-coder.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:732045653207:ios:5ea16f7e217c0b3d0b2c92</string>
+</dict>
+</plist>

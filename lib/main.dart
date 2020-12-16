@@ -1,7 +1,6 @@
 import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
 import 'package:flutter/material.dart'; // Duh
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart'; // For rejecting everything but digits in TextField
+import 'package:flutter/services.dart'; // For rejecting everything but digits in the TextField
 import 'package:intl/intl.dart'; // To get date and time
 import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
 import 'package:googleapis/drive/v3.dart' as drive; // Google Drive API
@@ -28,44 +27,45 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
-      home: RouteSplash(title: 'BP Logger'),
+      home: HomePage(title: 'BP Logger'),
     );
   }
 }
 
-class RouteSplash extends StatefulWidget {
-  RouteSplash({Key key, this.title}) : super(key: key);
+class HomePage extends StatefulWidget {
+  HomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _RouteSplashState createState() => _RouteSplashState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _RouteSplashState extends State<RouteSplash> {
+class _HomePageState extends State<HomePage> {
   String time = new DateFormat.Hm().format(DateTime.now()); // Time is determined whenever app is launched
-  drive.DriveApi driveApi;
-  bool isLoading = false;
-  String loadingText = "";
+  drive.DriveApi driveApi; // For Google Drive API
+  bool isLoading = false; // For making loading bar invisible when not used
+  String loadingText = ""; // For showing the current state of the file write
 
   _instantiateApi() async {
-    driveApi = await DriveAbstraction.createDriveApi();
+    driveApi = await DriveAbstraction.createDriveApi(); // Sign in to Google and create an instance of the Drive API
   }
 
+  // Following runs when the program starts
   @override
   void initState() {
     super.initState();
-    _instantiateApi(); // Sign in to Google and create a Drive API instace
+    _instantiateApi(); // instantiate API asynchronous to main
   }
 
-  static DateTime date = new DateTime.now(); // date var gets changed by DatePicker
+  static DateTime date = new DateTime.now(); // date variable gets changed by the DatePicker
   String dateString = new DateFormat("d/M/y").format(date); // dateString gets updated every time date changes
-  var textFieldController1 = TextEditingController(); // Control TextField diastolic
-  var textFieldController2 = TextEditingController(); // Control TextField systolic
+  var textFieldController1 = TextEditingController(); // Control diastolic TextField
+  var textFieldController2 = TextEditingController(); // Control systolic TextField
 
   // This snackbar pops up when the file has successfully been written to
   final snackBar = SnackBar(
-    backgroundColor: Colors.grey[800],
-    behavior: SnackBarBehavior.floating,
+    backgroundColor: Colors.grey[800], // Make it grey because it doesn't by default
+    behavior: SnackBarBehavior.floating, // SnackBarBehavior.fixed looks horrible which is the default
     content: Text("Successfully wrote to log file", style: TextStyle(color: Colors.white)),
     duration: Duration(seconds: 2),
   );
@@ -77,20 +77,21 @@ class _RouteSplashState extends State<RouteSplash> {
       firstDate: DateTime(2015),
       lastDate: DateTime(3000),
     );
-    if (picked != null && picked != date) // Only update if user picked and isn't the same as before
+    if (picked != null && picked != date) { // Only update if user picked and isn't the same as before
       setState(() {
         date = picked;
       });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        bottom: PreferredSize(
+        bottom: PreferredSize( // PreferredSize is expected by bottom argument
           preferredSize: Size(double.infinity, 0.0),
           child: Opacity(
-            opacity: isLoading ? 1.0 : 0.0,
+            opacity: isLoading ? 1.0 : 0.0, // Hide if false, show if true
             child:  LinearProgressIndicator(),
           ),
         ),
@@ -117,10 +118,10 @@ class _RouteSplashState extends State<RouteSplash> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
-                // Invisible button of same size to make the Text centered
+                // Invisible button of the same size to make the Text centered
                 Opacity(
                   opacity: 0.0,
-                  child: IconButton( // onPressed removed to make this not pressable
+                  child: IconButton(
                     icon: Icon(Icons.edit),
                     iconSize: 40.0,
                     onPressed: null,
@@ -135,7 +136,7 @@ class _RouteSplashState extends State<RouteSplash> {
                   iconSize: 40.0,
                   onPressed: () async {
                     await _selectDate(context);
-                    dateString = DateFormat("d/M/y").format(date); // Edit button beside date to change date (default today)
+                    dateString = DateFormat("d/M/y").format(date); // Edit button beside date to change date (defaults to today)
                   },
                 ),
               ],
@@ -147,7 +148,7 @@ class _RouteSplashState extends State<RouteSplash> {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: TextField(
-                maxLength: 3,
+                maxLength: 3, // If your BP is more than 999, how are you alive?
                 controller: textFieldController1,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -156,16 +157,16 @@ class _RouteSplashState extends State<RouteSplash> {
                   border: new OutlineInputBorder(
                     borderSide: new BorderSide(color: Colors.lightBlue)
                   ),
-                  labelText: 'Diastolic'
+                  labelText: 'Diastolic' // Labels go to the border when starting to type unlike hints
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter> [
-                  FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even if typed in
+                  FilteringTextInputFormatter.digitsOnly, // Only digits, everything else gets rejected even if typed in
                 ],
                 keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
                 onChanged: (text) {
                   setState(() {
-                    time = new DateFormat.Hm().format(DateTime.now());
+                    time = new DateFormat.Hm().format(DateTime.now()); // A hacky way to update the time
                   });
                 },
               ),
@@ -204,27 +205,27 @@ class _RouteSplashState extends State<RouteSplash> {
           icon: Icon(Icons.add_box_rounded),
           label: Text("ADD TO LOGS"),
           onPressed: () async {
+            // Get values from TextFieldControllers
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;
 
-            // Dismiss keyboard
+            // Dismiss keyboard once button is pressed
             FocusScopeNode currentFocus = FocusScope.of(context);
-
             if (!currentFocus.hasPrimaryFocus) {
               currentFocus.unfocus();
             }
 
-            // if (diastolic != "" && systolic != "") {
+            if (diastolic != "" && systolic != "") { // Don't waste time and resources running if values are not filled in
               setState(() {
-                isLoading = true;
+                isLoading = true; // Start loading animation
                 loadingText = "Getting file IDs";
               });
 
-              await DriveAbstraction.init(driveApi);
+              await DriveAbstraction.init(driveApi); // Checks if folder and file is there and also gets their IDs
 
-              String text = "$dateString, $time, $diastolic, $systolic";
+              String text = "$dateString, $time, $diastolic, $systolic"; // Text that has to be appended
 
-              List<int> filteredDataStreamList = [];
+              List<int> filteredDataStreamList = []; // add()ing to a null var is a bad idea
               setState(() {
                 loadingText = "Getting file data";
               });
@@ -233,10 +234,14 @@ class _RouteSplashState extends State<RouteSplash> {
               setState(() {
                 loadingText = "Filtering file data";
               });
-              for (var i in dataStreamList) {
-                for (var j in i) {
-                  filteredDataStreamList.add(j);
+              if (dataStreamList.length > 1) {
+                for (var i in dataStreamList) {
+                  for (var j in i) {
+                    filteredDataStreamList.add(j);
+                  }
                 }
+              } else {
+                filteredDataStreamList = dataStreamList[0];
               }
               print(filteredDataStreamList);
 
@@ -254,10 +259,11 @@ class _RouteSplashState extends State<RouteSplash> {
                 isLoading = false;
                 loadingText = "";
               });
-              Scaffold.of(context).showSnackBar(snackBar);
+              Scaffold.of(context).showSnackBar(snackBar); // Show a snackbar to alert user that the write was successful
+              // Clear the TextFields
               textFieldController1.clear();
               textFieldController2.clear();
-            // }
+            }
           },
         ),
       ),

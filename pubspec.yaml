@@ -46,6 +46,7 @@ flutter:
     - family: JetBrainsMono
       fonts:
         - asset: fonts/JetBrainsMono-VariableFont_wght.ttf
+        - asset: assets/google_logo.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

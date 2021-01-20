@@ -7,14 +7,16 @@ class DriveAbstraction {
   static String logFileID;
   static String appFolderID;
 
-  static Future<drive.DriveApi> createDriveApi() async {
+  static Future<signIn.GoogleSignInAccount> signInWithGoogle() async {
     final googleDriveSignIn = signIn.GoogleSignIn.standard(
         scopes: [
           drive.DriveApi.DriveFileScope
         ]); // Sign in to Google with Google Drive access
-    final signIn.GoogleSignInAccount account = await googleDriveSignIn
-        .signIn(); // Actually sign in
+    final signIn.GoogleSignInAccount account = await googleDriveSignIn.signIn();
+    return account;
+  }
 
+  static Future<drive.DriveApi> createDriveApi(account) async {
     // Really don't understand the following code
     final authHeaders = await account.authHeaders;
     final authenticateClient = GoogleAuthClient(authHeaders);

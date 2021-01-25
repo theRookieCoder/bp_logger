@@ -25,8 +25,8 @@ class _HomePageState extends State<HomePage> {
 
   _instantiateApi() async {
     _account = widget.account;
-    driveApi = await DriveAbstraction.createDriveApi(
-        _account); // Create an instance of the Drive API using Google account
+    // Create an instance of the Drive API using Google account
+    driveApi = await DriveAbstraction.createDriveApi(_account);
   }
 
   // Following runs when the program starts
@@ -143,111 +143,102 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Text(loadingText),
-          Center(
-            child: Column(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    // Invisible button of the same size to make the Text centered
-                    Opacity(
-                      opacity: 0.0,
-                      child: IconButton(
-                        icon: Icon(Icons.edit),
-                        iconSize: 40.0,
-                        onPressed: null,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(dateString,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline3), // Show date
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      iconSize: 40.0,
-                      onPressed: () async {
-                        await _selectDate(context);
-                        dateString = DateFormat("d/M/y").format(
-                            date); // Edit button beside date to change date (defaults to today)
-                      },
-                    ),
-                  ],
+                // Invisible button of the same size to make the Text centered
+                Opacity(
+                  opacity: 0.0,
+                  child: IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: 40.0,
+                    onPressed: null,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(time,
+                  child: Text(dateString,
                       style:
-                          Theme.of(context).textTheme.headline3), // Show time
+                          Theme.of(context).textTheme.headline3), // Show date
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: TextField(
-                    maxLength:
-                        3, // If your BP is more than 999, how are you alive?
-                    controller: textFieldController1,
-                    style: TextStyle(
-                      fontSize: 25.0,
-                    ),
-                    decoration: InputDecoration(
-                        border: new OutlineInputBorder(
-                            borderSide:
-                                new BorderSide(color: Colors.lightBlue)),
-                        labelText:
-                            'Diastolic' // Labels go to the border when starting to type unlike hints
-                        ),
-                    // Allow strictly numbers only
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter
-                          .digitsOnly, // Only digits, everything else gets rejected even if typed in
-                    ],
-                    keyboardType: TextInputType.numberWithOptions(
-                        decimal: false, signed: false), // Number only keyboard
-                    onChanged: (text) {
-                      setState(() {
-                        time = new DateFormat.Hm().format(
-                            DateTime.now()); // A hacky way to update the time
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: TextField(
-                    maxLength: 3,
-                    controller: textFieldController2,
-                    style: TextStyle(
-                      fontSize: 25.0,
-                    ),
-                    decoration: InputDecoration(
-                        border: new OutlineInputBorder(
-                          borderSide: new BorderSide(),
-                        ),
-                        labelText: 'Systolic'),
-                    // Allow strictly numbers only
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter
-                          .digitsOnly, // Only digits everything else is rejected even of typed in
-                    ],
-                    keyboardType: TextInputType.numberWithOptions(
-                        decimal: false, signed: false), // Number only keyboard
-                    onChanged: (text) {
-                      setState(() {
-                        time = new DateFormat.Hm().format(DateTime.now());
-                      });
-                    },
-                  ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  iconSize: 40.0,
+                  onPressed: () async {
+                    await _selectDate(context);
+                    dateString = DateFormat("d/M/y").format(
+                        date); // Edit button beside date to change date (defaults to today)
+                  },
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(time,
+                  style: Theme.of(context).textTheme.headline3), // Show time
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: TextField(
+                maxLength: 3, // If your BP is more than 999, how are you alive?
+                controller: textFieldController1,
+                style: TextStyle(
+                  fontSize: 25.0,
+                ),
+                decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.lightBlue)),
+                    labelText:
+                        'Diastolic' // Labels go to the border when starting to type unlike hints
+                    ),
+                // Allow strictly numbers only
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter
+                      .digitsOnly, // Only digits, everything else gets rejected even if typed in
+                ],
+                keyboardType: TextInputType.numberWithOptions(
+                    decimal: false, signed: false), // Number only keyboard
+                onChanged: (text) {
+                  setState(() {
+                    time = new DateFormat.Hm().format(
+                        DateTime.now()); // A hacky way to update the time
+                  });
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: TextField(
+                maxLength: 3,
+                controller: textFieldController2,
+                style: TextStyle(
+                  fontSize: 25.0,
+                ),
+                decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderSide: new BorderSide(),
+                    ),
+                    labelText: 'Systolic'),
+                // Allow strictly numbers only
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter
+                      .digitsOnly, // Only digits everything else is rejected even of typed in
+                ],
+                keyboardType: TextInputType.numberWithOptions(
+                    decimal: false, signed: false), // Number only keyboard
+                onChanged: (text) {
+                  setState(() {
+                    time = new DateFormat.Hm().format(DateTime.now());
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton.extended(

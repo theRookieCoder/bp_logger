@@ -1,11 +1,11 @@
 {
-    "name": "bp_logger",
-    "short_name": "bp_logger",
+    "name": "BP Logger",
+    "short_name": "BP Logger",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Logs your BP in Google Drive.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

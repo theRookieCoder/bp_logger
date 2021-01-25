@@ -7,13 +7,23 @@ class SignInPage extends StatelessWidget {
   const SignInPage({Key key, @required this.onSignIn}) : super(key: key);
   final void Function(signIn.GoogleSignInAccount) onSignIn;
 
-  Future<void> _signInWithGoogle() async {
+  Future<void> _signInWithGoogle(BuildContext context) async {
     signIn.GoogleSignInAccount account;
 
-    while (account == null) {
-      // Have to sign in or app won't work
-      account = await DriveAbstraction.signInWithGoogle(); // Sign in to Google
-    }
+    account = await DriveAbstraction.signInWithGoogle().catchError((e) async {
+      print("Sign in failed");
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error occured"),
+              content: Text(
+                  "We could not sign you in to Google successfully :(\nDebug:\n$e"),
+            );
+          });
+      account = null;
+      return;
+    });
 
     onSignIn(account);
   }
@@ -38,7 +48,7 @@ class SignInPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                await _signInWithGoogle();
+                await _signInWithGoogle(context);
               },
               child: Text("Sign in with Google"),
             ),

@@ -9,7 +9,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); // Manually set via Xcode for iOS
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp]); // Manually set via Xcode for iOS
     return MaterialApp(
       title: 'BP Logger',
       theme: ThemeData(

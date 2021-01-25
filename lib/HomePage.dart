@@ -1,4 +1,5 @@
 import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'; // Duh
 import 'package:flutter/services.dart'; // For rejecting everything but digits in the TextField
 import 'package:intl/intl.dart'; // To get date and time
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _instantiateApi(); // instantiate API asynchronous to main
+    _instantiateApi(); // instantiate API asynchronous to main (in seperate thread)
   }
 
   static DateTime date =
@@ -106,34 +107,22 @@ class _HomePageState extends State<HomePage> {
             Container(
               height: 220.0,
               child: DrawerHeader(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: NetworkImage(
                         _account.photoUrl,
-                        width: 100,
-                        height: 100,
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
                       ),
                     ),
-                  ),
-                  Text(_account.displayName,
-                      style: Theme.of(context).textTheme.headline3),
-                  Text(_account.email,
-                      style: Theme.of(context).textTheme.headline6)
-                ],
-              )),
+                    Text(_account.displayName,
+                        style: Theme.of(context).textTheme.headline3),
+                    Text(_account.email,
+                        style: Theme.of(context).textTheme.headline6)
+                  ],
+                ),
+              ),
             ),
             ListTile(
               leading: Icon(Icons.logout),
@@ -155,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                   opacity: 0.0,
                   child: IconButton(
                     icon: Icon(Icons.edit),
-                    iconSize: 40.0,
+                    iconSize: 35.0,
                     onPressed: null,
                   ),
                 ),
@@ -167,7 +156,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),
-                  iconSize: 40.0,
+                  iconSize: 35.0,
+                  tooltip: "Edit date",
                   onPressed: () async {
                     await _selectDate(context);
                     dateString = DateFormat("d/M/y").format(
@@ -182,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                   style: Theme.of(context).textTheme.headline3), // Show time
             ),
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
               child: TextField(
                 maxLength: 3, // If your BP is more than 999, how are you alive?
                 controller: textFieldController1,
@@ -211,7 +201,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
               child: TextField(
                 maxLength: 3,
                 controller: textFieldController2,
@@ -304,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                 isLoading = false;
                 loadingText = "";
               });
-              Scaffold.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                   snackBar); // Show a snackbar to alert user that the write was successful
               // Clear the TextFields
               textFieldController1.clear();

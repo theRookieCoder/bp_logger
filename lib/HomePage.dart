@@ -4,7 +4,8 @@ import 'package:flutter/services.dart'; // For rejecting everything but digits i
 import 'package:intl/intl.dart'; // To get date and time
 import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
 import 'package:googleapis/drive/v3.dart' as drive; // Google Drive API
-import 'package:google_sign_in/google_sign_in.dart' as signIn; // For signing in to Google
+import 'package:google_sign_in/google_sign_in.dart'
+    as signIn; // For signing in to Google
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key, @required this.account}) : super(key: key);
@@ -15,7 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String time = new DateFormat.Hm().format(DateTime.now()); // Time is determined whenever app is launched
+  String time = new DateFormat.Hm()
+      .format(DateTime.now()); // Time is determined whenever app is launched
   drive.DriveApi driveApi; // For Google Drive API
   bool isLoading = false; // For making loading bar invisible when not used
   String loadingText = ""; // For showing the current state of the file write
@@ -23,7 +25,8 @@ class _HomePageState extends State<HomePage> {
 
   _instantiateApi() async {
     _account = widget.account;
-    driveApi = await DriveAbstraction.createDriveApi(_account); // Create an instance of the Drive API using Google account
+    driveApi = await DriveAbstraction.createDriveApi(
+        _account); // Create an instance of the Drive API using Google account
   }
 
   // Following runs when the program starts
@@ -33,16 +36,23 @@ class _HomePageState extends State<HomePage> {
     _instantiateApi(); // instantiate API asynchronous to main
   }
 
-  static DateTime date = new DateTime.now(); // date variable gets changed by the DatePicker
-  String dateString = new DateFormat("d/M/y").format(date); // dateString gets updated every time date changes
-  var textFieldController1 = TextEditingController(); // Control diastolic TextField
-  var textFieldController2 = TextEditingController(); // Control systolic TextField
+  static DateTime date =
+      new DateTime.now(); // date variable gets changed by the DatePicker
+  String dateString = new DateFormat("d/M/y")
+      .format(date); // dateString gets updated every time date changes
+  var textFieldController1 =
+      TextEditingController(); // Control diastolic TextField
+  var textFieldController2 =
+      TextEditingController(); // Control systolic TextField
 
   // This snackbar pops up when the file has successfully been written to
   final snackBar = SnackBar(
-    backgroundColor: Colors.grey[800], // Make it grey because it doesn't by default
-    behavior: SnackBarBehavior.floating, // SnackBarBehavior.fixed looks horrible which is the default
-    content: Text("Successfully wrote to log file", style: TextStyle(color: Colors.white)),
+    backgroundColor:
+        Colors.grey[800], // Make it grey because it doesn't by default
+    behavior: SnackBarBehavior
+        .floating, // SnackBarBehavior.fixed looks horrible which is the default
+    content: Text("Successfully wrote to log file",
+        style: TextStyle(color: Colors.white)),
     duration: Duration(seconds: 2),
   );
 
@@ -53,7 +63,8 @@ class _HomePageState extends State<HomePage> {
       firstDate: DateTime(2015),
       lastDate: DateTime(3000),
     );
-    if (picked != null && picked != date) { // Only update if user picked and isn't the same as before
+    if (picked != null && picked != date) {
+      // Only update if user picked and isn't the same as before
       setState(() {
         date = picked;
       });
@@ -64,7 +75,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        bottom: PreferredSize( // PreferredSize is expected by bottom argument
+        bottom: PreferredSize(
+          // PreferredSize is expected by bottom argument
           preferredSize: Size(double.infinity, 0.0),
           child: Opacity(
             opacity: isLoading ? 1.0 : 0.0, // Hide if false, show if true
@@ -79,7 +91,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (BuildContext context) { // custom builder for closing dialog
+                builder: (BuildContext context) {
+                  // custom builder for closing dialog
                   return FileLocationDialog();
                 },
               );
@@ -93,34 +106,34 @@ class _HomePageState extends State<HomePage> {
             Container(
               height: 220.0,
               child: DrawerHeader(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Image.network(
-                          _account.photoUrl,
-                          width: 100,
-                          height: 100,
-                          loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent loadingProgress)
-                          {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                        ),
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(
+                        _account.photoUrl,
+                        width: 100,
+                        height: 100,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                       ),
                     ),
-                    Text(_account.displayName, style: Theme.of(context).textTheme.headline3),
-                    Text(_account.email, style: Theme.of(context).textTheme.headline6)
-                  ],
-                )
-              ),
+                  ),
+                  Text(_account.displayName,
+                      style: Theme.of(context).textTheme.headline3),
+                  Text(_account.email,
+                      style: Theme.of(context).textTheme.headline6)
+                ],
+              )),
             ),
             ListTile(
               leading: Icon(Icons.logout),
@@ -130,94 +143,111 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
+      body: Column(
+        children: [
+          Text(loadingText),
+          Center(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget> [
-                // Invisible button of the same size to make the Text centered
-                Opacity(
-                  opacity: 0.0,
-                  child: IconButton(
-                    icon: Icon(Icons.edit),
-                    iconSize: 40.0,
-                    onPressed: null,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    // Invisible button of the same size to make the Text centered
+                    Opacity(
+                      opacity: 0.0,
+                      child: IconButton(
+                        icon: Icon(Icons.edit),
+                        iconSize: 40.0,
+                        onPressed: null,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(dateString,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3), // Show date
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      iconSize: 40.0,
+                      onPressed: () async {
+                        await _selectDate(context);
+                        dateString = DateFormat("d/M/y").format(
+                            date); // Edit button beside date to change date (defaults to today)
+                      },
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(time,
+                      style:
+                          Theme.of(context).textTheme.headline3), // Show time
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextField(
+                    maxLength:
+                        3, // If your BP is more than 999, how are you alive?
+                    controller: textFieldController1,
+                    style: TextStyle(
+                      fontSize: 25.0,
+                    ),
+                    decoration: InputDecoration(
+                        border: new OutlineInputBorder(
+                            borderSide:
+                                new BorderSide(color: Colors.lightBlue)),
+                        labelText:
+                            'Diastolic' // Labels go to the border when starting to type unlike hints
+                        ),
+                    // Allow strictly numbers only
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Only digits, everything else gets rejected even if typed in
+                    ],
+                    keyboardType: TextInputType.numberWithOptions(
+                        decimal: false, signed: false), // Number only keyboard
+                    onChanged: (text) {
+                      setState(() {
+                        time = new DateFormat.Hm().format(
+                            DateTime.now()); // A hacky way to update the time
+                      });
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(dateString, style: Theme.of(context).textTheme.headline3), // Show date
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  iconSize: 40.0,
-                  onPressed: () async {
-                    await _selectDate(context);
-                    dateString = DateFormat("d/M/y").format(date); // Edit button beside date to change date (defaults to today)
-                  },
+                  child: TextField(
+                    maxLength: 3,
+                    controller: textFieldController2,
+                    style: TextStyle(
+                      fontSize: 25.0,
+                    ),
+                    decoration: InputDecoration(
+                        border: new OutlineInputBorder(
+                          borderSide: new BorderSide(),
+                        ),
+                        labelText: 'Systolic'),
+                    // Allow strictly numbers only
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Only digits everything else is rejected even of typed in
+                    ],
+                    keyboardType: TextInputType.numberWithOptions(
+                        decimal: false, signed: false), // Number only keyboard
+                    onChanged: (text) {
+                      setState(() {
+                        time = new DateFormat.Hm().format(DateTime.now());
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(time, style: Theme.of(context).textTheme.headline3), // Show time
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                maxLength: 3, // If your BP is more than 999, how are you alive?
-                controller: textFieldController1,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-                decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                        borderSide: new BorderSide(color: Colors.lightBlue)
-                    ),
-                    labelText: 'Diastolic' // Labels go to the border when starting to type unlike hints
-                ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter> [
-                  FilteringTextInputFormatter.digitsOnly, // Only digits, everything else gets rejected even if typed in
-                ],
-                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
-                onChanged: (text) {
-                  setState(() {
-                    time = new DateFormat.Hm().format(DateTime.now()); // A hacky way to update the time
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                maxLength: 3,
-                controller: textFieldController2,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-                decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderSide: new BorderSide(),
-                    ),
-                    labelText: 'Systolic'
-                ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter> [
-                  FilteringTextInputFormatter.digitsOnly, // Only digits everything else is rejected even of typed in
-                ],
-                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false), // Number only keyboard
-                onChanged: (text) {
-                  setState(() {
-                    time = new DateFormat.Hm().format(DateTime.now());
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton.extended(
@@ -234,21 +264,26 @@ class _HomePageState extends State<HomePage> {
               currentFocus.unfocus();
             }
 
-            if (diastolic != "" && systolic != "") { // Don't run if values are not filled in
+            if (diastolic != "" && systolic != "") {
+              // Don't run if values are not filled in
               setState(() {
                 isLoading = true; // Start loading animation
                 loadingText = "Getting file IDs";
               });
 
-              await DriveAbstraction.init(driveApi); // Checks if folder and file is there and also gets their IDs
+              await DriveAbstraction.init(
+                  driveApi); // Checks if folder and file is there and also gets their IDs
 
-              String text = "$dateString, $time, $diastolic, $systolic"; // Text that has to be appended
+              String text =
+                  "$dateString, $time, $diastolic, $systolic"; // Text that has to be appended
 
-              List<int> filteredDataStreamList = []; // add()ing to a null var is a bad idea
+              List<int> filteredDataStreamList =
+                  []; // add()ing to a null var is a bad idea
               setState(() {
                 loadingText = "Getting file data";
               });
-              final dataStreamList = await DriveAbstraction.getFileData(driveApi, DriveAbstraction.logFileID);
+              final dataStreamList = await DriveAbstraction.getFileData(
+                  driveApi, DriveAbstraction.logFileID);
 
               setState(() {
                 loadingText = "Filtering file data";
@@ -278,7 +313,8 @@ class _HomePageState extends State<HomePage> {
                 isLoading = false;
                 loadingText = "";
               });
-              Scaffold.of(context).showSnackBar(snackBar); // Show a snackbar to alert user that the write was successful
+              Scaffold.of(context).showSnackBar(
+                  snackBar); // Show a snackbar to alert user that the write was successful
               // Clear the TextFields
               textFieldController1.clear();
               textFieldController2.clear();

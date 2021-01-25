@@ -10,7 +10,8 @@ class SignInPage extends StatelessWidget {
   Future<void> _signInWithGoogle() async {
     signIn.GoogleSignInAccount account;
 
-    while (account == null) { // Have to sign in or app won't work
+    while (account == null) {
+      // Have to sign in or app won't work
       account = await DriveAbstraction.signInWithGoogle(); // Sign in to Google
     }
 
@@ -36,7 +37,9 @@ class SignInPage extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () async {await _signInWithGoogle();},
+              onPressed: () async {
+                await _signInWithGoogle();
+              },
               child: Text("Sign in with Google"),
             ),
             Opacity(

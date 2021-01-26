@@ -26,6 +26,7 @@ class _SignInPageState extends State<SignInPage> {
       account = await DriveAbstraction.signInWithGoogle(googleDriveSignIn)
           .catchError((e) async {
         print("Sign in failed");
+        print("Error dump:\n$e");
         await showDialog(
             context: context,
             builder: (BuildContext context) {

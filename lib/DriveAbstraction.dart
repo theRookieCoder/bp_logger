@@ -2,6 +2,7 @@ import 'package:google_sign_in/google_sign_in.dart'
     as signIn; // For signing in to Google
 import 'package:googleapis/drive/v3.dart'
     as drive; // For accessing Google Drive
+import 'package:googleapis/tagmanager/v2.dart';
 import 'GoogleAuthClient.dart';
 import 'dart:convert';
 
@@ -11,8 +12,11 @@ class DriveAbstraction {
 
   static Future<signIn.GoogleSignInAccount> signInWithGoogle(
       signIn.GoogleSignIn googleDriveSignIn) async {
-    final signIn.GoogleSignInAccount account =
+    signIn.GoogleSignInAccount account =
         await googleDriveSignIn.signInSilently();
+    if (account == null) {
+      account = await googleDriveSignIn.signIn();
+    }
     return account;
   }
 

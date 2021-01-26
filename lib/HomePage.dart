@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'; // Duh
@@ -38,6 +40,15 @@ class _HomePageState extends State<HomePage> {
   List<String> languageList = [
     "English",
   ];
+
+  double _getDrawerWidth(context) {
+    double width = MediaQuery.of(context).size.width * 3 / 4;
+    if (width > 300) {
+      return 300;
+    } else {
+      return width;
+    }
+  }
 
   _instantiateApi() async {
     _account = widget.account;
@@ -124,58 +135,62 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            Container(
-              height: 220.0,
-              child: DrawerHeader(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: NetworkImage(
-                        _account.photoUrl,
+      drawer: Container(
+        // 75% of the screen occupied by the drawer
+        width: _getDrawerWidth(context),
+        child: Drawer(
+          child: ListView(
+            children: <Widget>[
+              Container(
+                height: 220.0,
+                child: DrawerHeader(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(
+                          _account.photoUrl,
+                        ),
                       ),
-                    ),
-                    Text(_account.displayName,
-                        style: Theme.of(context).textTheme.headline3),
-                    Text(_account.email,
-                        style: Theme.of(context).textTheme.headline6)
-                  ],
+                      Text(_account.displayName,
+                          style: Theme.of(context).textTheme.headline3),
+                      Text(_account.email,
+                          style: Theme.of(context).textTheme.headline6)
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("Log out"),
-              onTap: () {
-                widget.onSignOut(
-                  null,
-                  widget.googleDriveSignIn,
-                  true, // We want to log out the user so true
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.insert_drive_file),
-              title: Text("Access file"),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    // custom builder for closing dialog
-                    return FileLocationDialog();
-                  },
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.info_outline_rounded),
-              title: Text("v0.8a (Logout update)"),
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text("Log out"),
+                onTap: () {
+                  widget.onSignOut(
+                    null,
+                    widget.googleDriveSignIn,
+                    true, // We want to log out the user so true
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.insert_drive_file),
+                title: Text("Access file"),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      // custom builder for closing dialog
+                      return FileLocationDialog();
+                    },
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.info_outline_rounded),
+                title: Text("v0.8.2a (Logout update)"),
+              ),
+            ],
+          ),
         ),
       ),
       body: Center(
@@ -226,11 +241,11 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 25.0,
                 ),
                 decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                        borderSide: new BorderSide(color: Colors.lightBlue)),
-                    labelText:
-                        'Diastolic' // Labels go to the border when starting to type unlike hints
-                    ),
+                  counterText: "",
+                  border: new OutlineInputBorder(
+                      borderSide: new BorderSide(color: Colors.lightBlue)),
+                  labelText: 'Diastolic',
+                ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter
@@ -255,10 +270,12 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 25.0,
                 ),
                 decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderSide: new BorderSide(),
-                    ),
-                    labelText: 'Systolic'),
+                  counterText: "",
+                  border: new OutlineInputBorder(
+                    borderSide: new BorderSide(),
+                  ),
+                  labelText: 'Systolic',
+                ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter

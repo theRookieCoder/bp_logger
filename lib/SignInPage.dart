@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart' as signIn;
-
+import 'package:googleapis/drive/v3.dart' as drive;
 import 'DriveAbstraction.dart'; // For signing in to Google
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key key, @required this.onSignIn}) : super(key: key);
-  final void Function(signIn.GoogleSignInAccount) onSignIn;
+  final void Function(signIn.GoogleSignInAccount account,
+      signIn.GoogleSignIn googleSignIn, bool logOut) onSignIn;
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -16,9 +17,14 @@ class _SignInPageState extends State<SignInPage> {
     bool success = false;
 
     signIn.GoogleSignInAccount account;
+    signIn.GoogleSignIn googleDriveSignIn;
     while (success == false) {
+      googleDriveSignIn = signIn.GoogleSignIn.standard(scopes: [
+        drive.DriveApi.DriveFileScope
+      ]); // Sign in to Google with Google Drive access
       success = true;
-      account = await DriveAbstraction.signInWithGoogle().catchError((e) async {
+      account = await DriveAbstraction.signInWithGoogle(googleDriveSignIn)
+          .catchError((e) async {
         print("Sign in failed");
         await showDialog(
             context: context,
@@ -26,7 +32,7 @@ class _SignInPageState extends State<SignInPage> {
               return AlertDialog(
                 title: Text("Error occured"),
                 content: Text(
-                  "We could not sign you in to Google successfully :(\nPlease contact ileshkt@gmail.com for assistance\n\nDebug:\n$e",
+                  "We could not sign you in successfully :(\nPlease contact ileshkt@gmail.com for assistance\n\nDebug:\n$e",
                 ),
                 actionsPadding: EdgeInsets.all(10.0),
                 actions: <Widget>[
@@ -54,7 +60,7 @@ class _SignInPageState extends State<SignInPage> {
       }
     }
 
-    widget.onSignIn(account);
+    widget.onSignIn(account, googleDriveSignIn, false);
   }
 
   @override

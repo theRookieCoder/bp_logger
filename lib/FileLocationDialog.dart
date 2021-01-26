@@ -17,7 +17,7 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
       ),
       */
       title: Text(
-        'Log file location',
+        'File location',
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.headline4,
       ),
@@ -27,7 +27,7 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Open Google Drive, go to My Drive, then BP Logger folder. Then open the file called log to see data.\nMake sure you are signed into the same Google account that you used in BP Logger",
+            "To access the file, open Google Drive. Go to My Drive, then the BP Logger folder. Then open the file called 'log' to see your data.\nMake sure you are signed into the same Google account in Drive that you used in BP Logger",
             style: Theme.of(context).textTheme.subtitle1,
           ),
           Padding(

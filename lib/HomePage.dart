@@ -9,8 +9,19 @@ import 'package:google_sign_in/google_sign_in.dart'
     as signIn; // For signing in to Google
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key, @required this.account}) : super(key: key);
+  const HomePage(
+      {Key key,
+      @required this.account,
+      @required this.onSignOut,
+      @required this.googleDriveSignIn})
+      : super(key: key);
   final signIn.GoogleSignInAccount account;
+  final signIn.GoogleSignIn googleDriveSignIn;
+  final void Function(
+    signIn.GoogleSignInAccount,
+    signIn.GoogleSignIn googleDriveSignIn,
+    bool logOut,
+  ) onSignOut;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -23,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = false; // For making loading bar invisible when not used
   String loadingText = ""; // For showing the current state of the file write
   signIn.GoogleSignInAccount _account;
+  String language = "English";
 
   _instantiateApi() async {
     _account = widget.account;
@@ -86,18 +98,29 @@ class _HomePageState extends State<HomePage> {
         ),
         title: Text("BP Logger"),
         actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline),
-            tooltip: "Location of log file",
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  // custom builder for closing dialog
-                  return FileLocationDialog();
+          Padding(
+            padding: EdgeInsets.all(10.0),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                onChanged: (newValue) {
+                  setState(() {
+                    language = newValue;
+                  });
                 },
-              );
-            },
+                icon: Icon(Icons.language_outlined),
+                value: language,
+                items: <String>[
+                  'தமிழ்',
+                  'Deutsch',
+                  'English',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ],
       ),
@@ -127,7 +150,30 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text("Log out"),
-              onTap: () {},
+              onTap: () {
+                widget.onSignOut(
+                  null,
+                  widget.googleDriveSignIn,
+                  true, // We want to log out the user so true
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.insert_drive_file),
+              title: Text("Access file"),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    // custom builder for closing dialog
+                    return FileLocationDialog();
+                  },
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.info_outline_rounded),
+              title: Text("v0.8a (Logout update)"),
             ),
           ],
         ),
@@ -232,8 +278,8 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton.extended(
-          icon: Icon(Icons.add_box_rounded),
-          label: Text("ADD TO LOGS"),
+          icon: Icon(Icons.storage),
+          label: Text("ADD TO FILE"),
           onPressed: () async {
             // Get values from TextFieldControllers
             String diastolic = textFieldController1.text;

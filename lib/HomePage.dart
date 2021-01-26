@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Text(_account.displayName,
-                          style: Theme.of(context).textTheme.headline3),
+                          style: Theme.of(context).textTheme.headline4),
                       Text(_account.email,
                           style: Theme.of(context).textTheme.headline6)
                     ],

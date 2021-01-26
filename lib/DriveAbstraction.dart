@@ -2,7 +2,6 @@ import 'package:google_sign_in/google_sign_in.dart'
     as signIn; // For signing in to Google
 import 'package:googleapis/drive/v3.dart'
     as drive; // For accessing Google Drive
-import 'package:googleapis/tagmanager/v2.dart';
 import 'GoogleAuthClient.dart';
 import 'dart:convert';
 
@@ -15,6 +14,7 @@ class DriveAbstraction {
     signIn.GoogleSignInAccount account =
         await googleDriveSignIn.signInSilently();
     if (account == null) {
+      print("Silent sign in failed");
       account = await googleDriveSignIn.signIn();
     }
     return account;

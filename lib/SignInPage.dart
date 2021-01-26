@@ -13,6 +13,20 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  String _errorMessage(String e) {
+    if (e.contains("popup") && e.contains("closed") && e.contains("user")) {
+      return "You have to sign in to Google to use this app!";
+    } else if (e.contains("Cookies") &&
+        e.contains("not") &&
+        e.contains("enabled")) {
+      return "To sign in with Google, cookies have to be enabled!";
+    } else if (e.contains("popup") && e.contains("blocked")) {
+      return "Pop-ups are required to sign in to Google";
+    } else {
+      return "We could not sign you in successfully\nPlease contact ileshkt@gmail.com for assistance\nDebug:\n$e";
+    }
+  }
+
   Future<void> _signInWithGoogle(BuildContext context) async {
     bool success = false;
 
@@ -33,7 +47,7 @@ class _SignInPageState extends State<SignInPage> {
               return AlertDialog(
                 title: Text("Error occured"),
                 content: Text(
-                  "We could not sign you in successfully :(\nPlease contact ileshkt@gmail.com for assistance\n\nDebug:\n$e",
+                  _errorMessage(e.toString()),
                 ),
                 actionsPadding: EdgeInsets.all(10.0),
                 actions: <Widget>[

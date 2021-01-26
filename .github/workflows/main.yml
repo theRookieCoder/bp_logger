@@ -1,0 +1,19 @@
+name: main
+on: [push]
+
+jobs:
+  get-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: steebchen/flutter@v1.25.0
+      - run: flutter pub get
+  build-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: steebchen/flutter@v1.25.0
+      - run: flutter build web
+  deploy-to-firebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: w9jds/firebase-action@v2.0.0
+      - run: firebase deploy

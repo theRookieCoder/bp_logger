@@ -9,8 +9,10 @@ class DriveAbstraction {
   static String logFileID;
   static String appFolderID;
 
-  static Future<signIn.GoogleSignInAccount> signInWithGoogle(signIn.GoogleSignIn googleDriveSignIn) async {
-    final signIn.GoogleSignInAccount account = await googleDriveSignIn.signIn();
+  static Future<signIn.GoogleSignInAccount> signInWithGoogle(
+      signIn.GoogleSignIn googleDriveSignIn) async {
+    final signIn.GoogleSignInAccount account =
+        await googleDriveSignIn.signInSilently();
     return account;
   }
 

@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                   opacity: 0.0,
                   child: IconButton(
                     icon: Icon(Icons.edit),
-                    iconSize: 35.0,
+                    iconSize: 30.0,
                     onPressed: null,
                   ),
                 ),
@@ -217,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),
-                  iconSize: 35.0,
+                  iconSize: 30.0,
                   tooltip: "Edit date",
                   onPressed: () async {
                     await _selectDate(context);

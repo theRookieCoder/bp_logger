@@ -35,6 +35,9 @@ class _HomePageState extends State<HomePage> {
   String loadingText = ""; // For showing the current state of the file write
   signIn.GoogleSignInAccount _account;
   String language = "English";
+  List<String> languageList = [
+    "English",
+  ];
 
   _instantiateApi() async {
     _account = widget.account;
@@ -109,11 +112,8 @@ class _HomePageState extends State<HomePage> {
                 },
                 icon: Icon(Icons.language_outlined),
                 value: language,
-                items: <String>[
-                  'தமிழ்',
-                  'Deutsch',
-                  'English',
-                ].map<DropdownMenuItem<String>>((String value) {
+                items:
+                    languageList.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),

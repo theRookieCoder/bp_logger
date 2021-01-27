@@ -2,22 +2,26 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on push
-"on": push
+'on': push
 jobs:
-  build_and_preview:
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
+        name: Set-up flutter
       - run: flutter config --enable-web
       - run: flutter pub get
+        name: Build app
       - run: flutter build web
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_BP_LOGGER_ROOKIE_CODER }}"
-          projectId: bp-logger-rookie-coder
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      name: Deploy to Firebase
+    - uses: w9jds/firebase-action@master
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

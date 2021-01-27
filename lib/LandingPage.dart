@@ -13,7 +13,7 @@ class _LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _account;
   GoogleSignIn _googleDriveSignIn;
 
-  void _updateUser(
+  Future<void> _updateUser(
     GoogleSignInAccount account,
     GoogleSignIn googleDriveSignIn,
     bool logOut,

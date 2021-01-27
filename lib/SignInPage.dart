@@ -6,7 +6,7 @@ import 'DriveAbstraction.dart'; // For signing in to Google
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key key, @required this.onSignIn}) : super(key: key);
-  final void Function(
+  final Future<void> Function(
           GoogleSignInAccount account, GoogleSignIn googleSignIn, bool logOut)
       onSignIn;
 
@@ -77,7 +77,7 @@ class _SignInPageState extends State<SignInPage> {
       }
     }
 
-    widget.onSignIn(account, googleDriveSignIn, false);
+    await widget.onSignIn(account, googleDriveSignIn, false);
   }
 
   @override

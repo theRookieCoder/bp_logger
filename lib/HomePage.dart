@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
       : super(key: key);
   final GoogleSignInAccount account;
   final GoogleSignIn googleDriveSignIn;
-  final void Function(
+  final Future<void> Function(
     GoogleSignInAccount,
     GoogleSignIn googleDriveSignIn,
     bool logOut,
@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   List<String> languageList = [
     "English",
   ];
+  bool verboseMode = false;
 
   double _getDrawerWidth(context) {
     double width = MediaQuery.of(context).size.width * 3 / 4;
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _instantiateApi(); // instantiate API asynchronous to main (in seperate thread)
+    _instantiateApi();
   }
 
   static DateTime date =
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   // This snackbar pops up when the file has successfully been written to
   final successSnackBar = SnackBar(
     backgroundColor:
-        Colors.grey[800], // Make it grey because it doesn't by default
+        Colors.grey[800], // Make it grey because it isn't by default
     behavior: SnackBarBehavior
         .floating, // SnackBarBehavior.fixed looks horrible which is the default
     content:
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
 
   final failSnackBar = SnackBar(
     backgroundColor:
-        Colors.grey[800], // Make it grey because it doesn't by default
+        Colors.grey[800], // Make it grey because it isn't by default
     behavior: SnackBarBehavior
         .floating, // SnackBarBehavior.fixed looks horrible which is the default
     content: Text("File write failed", style: TextStyle(color: Colors.white)),
@@ -148,7 +149,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: Container(
-        // 75% of the screen occupied by the drawer
+        // make 75% of the screen occupied by the drawer
         width: _getDrawerWidth(context),
         child: Drawer(
           child: ListView(
@@ -164,8 +165,10 @@ class _HomePageState extends State<HomePage> {
                         width: _getDrawerWidth(context) / 2.5,
                         child: GoogleUserCircleAvatar(identity: _account),
                       ),
+                      // Name of user
                       Text(_account.displayName,
                           style: Theme.of(context).textTheme.headline4),
+                      // Email ID of user
                       Text(_account.email,
                           style: Theme.of(context).textTheme.headline6)
                     ],
@@ -175,11 +178,12 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text("Log out"),
-                onTap: () {
-                  widget.onSignOut(
-                    null,
-                    widget.googleDriveSignIn,
-                    true, // We want to log out the user so true
+                onTap: () async {
+                  await widget.onSignOut(
+                    null, // Nullify account to go to signInPage
+                    widget
+                        .googleDriveSignIn, // Required to sign out from Google
+                    true, // We want to log out the user so make this true
                   );
                 },
               ),
@@ -203,6 +207,31 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
                 title: Text("v0.9.0a"),
+                onLongPress: () {
+                  if (verboseMode) {
+                    verboseMode = false;
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.grey[800],
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(
+                        "Verbose mode turned off",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      duration: Duration(seconds: 2),
+                    ));
+                  } else {
+                    verboseMode = true;
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.grey[800],
+                      behavior: SnackBarBehavior.floating,
+                      content: Text(
+                        "Verbose mode turned on",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
+                },
               ),
             ],
           ),
@@ -332,8 +361,7 @@ class _HomePageState extends State<HomePage> {
                 loadingText = "Getting file IDs";
               });
 
-              await DriveAbstraction.init(
-                  driveApi); // Checks if folder and file is there and also gets their IDs
+              await DriveAbstraction.init(driveApi);
 
               String text =
                   "$dateString, $time, $diastolic, $systolic"; // Text that has to be appended
@@ -351,9 +379,7 @@ class _HomePageState extends State<HomePage> {
               });
               if (dataStreamList.length > 1) {
                 for (var i in dataStreamList) {
-                  for (var j in i) {
-                    filteredDataStreamList.add(j);
-                  }
+                  filteredDataStreamList.addAll(i);
                 }
               } else {
                 filteredDataStreamList = dataStreamList[0];

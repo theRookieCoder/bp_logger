@@ -12,15 +12,9 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: beta
-        name: Set-up flutter
       - run: flutter config --enable-web
       - run: flutter pub get
-        name: Build app
       - run: flutter build web
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
       - uses: w9jds/firebase-action@master
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

@@ -8,7 +8,10 @@ import 'package:intl/intl.dart' show DateFormat; // To get date and time
 import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
 import 'package:googleapis/drive/v3.dart' show DriveApi; // Google Drive API
 import 'package:google_sign_in/google_sign_in.dart'
-    show GoogleSignIn, GoogleSignInAccount; // For signing in to Google
+    show
+        GoogleSignIn,
+        GoogleSignInAccount,
+        GoogleUserCircleAvatar; // For signing in to Google
 
 class HomePage extends StatefulWidget {
   const HomePage(
@@ -147,11 +150,10 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          _account.photoUrl,
-                        ),
+                      Container(
+                        height: _getDrawerWidth(context) / 3,
+                        width: _getDrawerWidth(context) / 3,
+                        child: GoogleUserCircleAvatar(identity: _account),
                       ),
                       Text(_account.displayName,
                           style: Theme.of(context).textTheme.headline4),

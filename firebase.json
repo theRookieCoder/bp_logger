@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "build/web",
+    "public": "~/runner/build/web",
     "ignore": [
       "firebase.json",
       "**/.*",

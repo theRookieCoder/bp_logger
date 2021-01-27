@@ -76,26 +76,6 @@ class _HomePageState extends State<HomePage> {
   var textFieldController2 =
       TextEditingController(); // Control systolic TextField
 
-  // This snackbar pops up when the file has successfully been written to
-  final successSnackBar = SnackBar(
-    backgroundColor:
-        Colors.grey[800], // Make it grey because it isn't by default
-    behavior: SnackBarBehavior
-        .floating, // SnackBarBehavior.fixed looks horrible which is the default
-    content:
-        Text("File write succeeded", style: TextStyle(color: Colors.white)),
-    duration: Duration(seconds: 2),
-  );
-
-  final failSnackBar = SnackBar(
-    backgroundColor:
-        Colors.grey[800], // Make it grey because it isn't by default
-    behavior: SnackBarBehavior
-        .floating, // SnackBarBehavior.fixed looks horrible which is the default
-    content: Text("File write failed", style: TextStyle(color: Colors.white)),
-    duration: Duration(seconds: 2),
-  );
-
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -153,6 +133,7 @@ class _HomePageState extends State<HomePage> {
         width: _getDrawerWidth(context),
         child: Drawer(
           child: ListView(
+            physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
                 height: _getDrawerWidth(context) * 0.8,
@@ -207,26 +188,35 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
                 title: Text("v0.9.0a"),
+                hoverColor: Theme.of(context).disabledColor.withAlpha(0x00),
+                enableFeedback: false,
+                onTap: () => print(Theme.of(context).brightness.index),
                 onLongPress: () {
                   if (verboseMode) {
                     verboseMode = false;
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Theme.of(context).cardColor,
                       behavior: SnackBarBehavior.floating,
                       content: Text(
                         "Verbose mode turned off",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                            color: Theme.of(context).brightness.index.isOdd
+                                ? Colors.black
+                                : Colors.white),
                       ),
                       duration: Duration(seconds: 2),
                     ));
                   } else {
                     verboseMode = true;
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.grey[800],
+                      backgroundColor: Theme.of(context).cardColor,
                       behavior: SnackBarBehavior.floating,
                       content: Text(
                         "Verbose mode turned on",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                            color: Theme.of(context).brightness.index.isOdd
+                                ? Colors.black
+                                : Colors.white),
                       ),
                       duration: Duration(seconds: 2),
                     ));
@@ -405,7 +395,18 @@ class _HomePageState extends State<HomePage> {
                   loadingText = "";
                 });
 
-                ScaffoldMessenger.of(context).showSnackBar(successSnackBar);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Theme.of(context).cardColor,
+                    behavior: SnackBarBehavior.floating,
+                    content: Text("File write succeeded",
+                        style: TextStyle(
+                            color: Theme.of(context).brightness.index.isOdd
+                                ? Colors.black
+                                : Colors.white)),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
 
                 textFieldController1.clear();
                 textFieldController2.clear();
@@ -415,7 +416,18 @@ class _HomePageState extends State<HomePage> {
                   loadingText = "";
                 });
 
-                ScaffoldMessenger.of(context).showSnackBar(failSnackBar);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Theme.of(context).cardColor,
+                    behavior: SnackBarBehavior.floating,
+                    content: Text("File write failed",
+                        style: TextStyle(
+                            color: Theme.of(context).brightness.index.isOdd
+                                ? Colors.black
+                                : Colors.white)),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               }
             }
           },

@@ -33,6 +33,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-files
+          path: build/web
       - name: Deploy
         uses: w9jds/firebase-action@master
         env:

@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
-                title: Text("v0.8.6a (Logout update)"),
+                title: Text("v0.9.0a"),
               ),
             ],
           ),

@@ -76,13 +76,22 @@ class _HomePageState extends State<HomePage> {
       TextEditingController(); // Control systolic TextField
 
   // This snackbar pops up when the file has successfully been written to
-  final snackBar = SnackBar(
+  final successSnackBar = SnackBar(
     backgroundColor:
         Colors.grey[800], // Make it grey because it doesn't by default
     behavior: SnackBarBehavior
         .floating, // SnackBarBehavior.fixed looks horrible which is the default
-    content: Text("Successfully wrote to log file",
-        style: TextStyle(color: Colors.white)),
+    content:
+        Text("File write succeeded", style: TextStyle(color: Colors.white)),
+    duration: Duration(seconds: 2),
+  );
+
+  final failSnackBar = SnackBar(
+    backgroundColor:
+        Colors.grey[800], // Make it grey because it doesn't by default
+    behavior: SnackBarBehavior
+        .floating, // SnackBarBehavior.fixed looks horrible which is the default
+    content: Text("File write failed", style: TextStyle(color: Colors.white)),
     duration: Duration(seconds: 2),
   );
 
@@ -177,12 +186,16 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.insert_drive_file),
                 title: Text("Access file"),
-                onTap: () {
+                onTap: () async {
+                  final fileID =
+                      await DriveAbstraction.getFileId(driveApi, "log");
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       // custom builder for closing dialog
-                      return FileLocationDialog();
+                      return FileLocationDialog(
+                        fileID: fileID,
+                      );
                     },
                   );
                 },
@@ -311,6 +324,8 @@ class _HomePageState extends State<HomePage> {
             }
 
             if (diastolic != "" && systolic != "") {
+              bool success = true;
+
               // Don't run if values are not filled in
               setState(() {
                 isLoading = true; // Start loading animation
@@ -353,17 +368,29 @@ class _HomePageState extends State<HomePage> {
                 DriveAbstraction.logFileID,
                 text,
                 filteredDataStreamList,
-              );
-
-              setState(() {
-                isLoading = false;
-                loadingText = "";
+              ).catchError((e) {
+                print(e);
+                success = false;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                  snackBar); // Show a snackbar to alert user that the write was successful
-              // Clear the TextFields
-              textFieldController1.clear();
-              textFieldController2.clear();
+
+              if (success) {
+                setState(() {
+                  isLoading = false;
+                  loadingText = "";
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(successSnackBar);
+
+                textFieldController1.clear();
+                textFieldController2.clear();
+              } else {
+                setState(() {
+                  isLoading = false;
+                  loadingText = "";
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(failSnackBar);
+              }
             }
           },
         ),

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart' show TapGestureRecognizer;
+import 'package:url_launcher/url_launcher.dart' show launch;
 
 class FileLocationDialog extends StatefulWidget {
+  const FileLocationDialog({Key key, @required this.fileID}) : super(key: key);
+  final String fileID;
+
   @override
   _FileLocationDialogState createState() => _FileLocationDialogState();
 }
@@ -24,10 +29,37 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'To view the file, tap ',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+                TextSpan(
+                  text: 'here',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.normal,
+                    letterSpacing: 0.15,
+                    color: Colors.blue,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      launch(
+                        "https://docs.google.com/spreadsheets/d/${widget.fileID}/",
+                      );
+                    },
+                ),
+              ],
+            ),
+          ),
+          Text(""),
           Text(
-            "To access the file, open Google Drive. Go to My Drive, then the BP Logger folder. Then open the file called 'log' to see your data.\nMake sure you are signed into the same Google account in Drive that you used in BP Logger",
+            "To access the file itself:\n- Open Google Drive\n- Go to My Drive\n- Go to a folder called 'BP Logger'\n- Open the file called 'log' to see your data.\nMake sure you are signed into the same Google account in Drive that you used in BP Logger",
             style: Theme.of(context).textTheme.subtitle1,
           ),
           Padding(

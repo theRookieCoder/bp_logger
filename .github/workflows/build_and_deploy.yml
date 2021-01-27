@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-files
-          path: /build/web
+          path: build/web
           retention-days: 1
   deploy:
     needs: [build]
@@ -33,7 +33,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-files
-          path: /build/web
+          path: ~/build/web
       - name: Deploy
         uses: w9jds/firebase-action@master
         env:

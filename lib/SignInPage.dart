@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart' as signIn;
-import 'package:googleapis/drive/v3.dart' as drive;
+import 'package:google_sign_in/google_sign_in.dart'
+    show GoogleSignInAccount, GoogleSignIn;
+import 'package:googleapis/drive/v3.dart' show DriveApi;
 import 'DriveAbstraction.dart'; // For signing in to Google
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key key, @required this.onSignIn}) : super(key: key);
-  final void Function(signIn.GoogleSignInAccount account,
-      signIn.GoogleSignIn googleSignIn, bool logOut) onSignIn;
+  final void Function(
+          GoogleSignInAccount account, GoogleSignIn googleSignIn, bool logOut)
+      onSignIn;
 
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -30,11 +32,11 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _signInWithGoogle(BuildContext context) async {
     bool success = false;
 
-    signIn.GoogleSignInAccount account;
-    signIn.GoogleSignIn googleDriveSignIn;
+    GoogleSignInAccount account;
+    GoogleSignIn googleDriveSignIn;
     while (success == false) {
-      googleDriveSignIn = signIn.GoogleSignIn.standard(scopes: [
-        drive.DriveApi.DriveFileScope
+      googleDriveSignIn = GoogleSignIn.standard(scopes: [
+        DriveApi.DriveFileScope
       ]); // Sign in to Google with Google Drive access
       success = true;
       account = await DriveAbstraction.signInWithGoogle(googleDriveSignIn)

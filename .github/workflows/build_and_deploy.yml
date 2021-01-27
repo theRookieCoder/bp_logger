@@ -8,18 +8,31 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v1
+      - name: Checkout repos
+        uses: actions/checkout@v2
+        uses: subosito/flutter-action@v1
         with:
           channel: beta
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build web
+      - name: Build app
+        run: flutter config --enable-web
+        run: flutter pub get
+        run: flutter build web
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-files
+          path: build/web
+          retention-days: 1
   deploy:
     needs: [build]
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: w9jds/firebase-action@master
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build-files
+      - name: Deploy
+        uses: w9jds/firebase-action@master
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

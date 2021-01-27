@@ -1,14 +1,14 @@
-import 'dart:ui';
-
 import 'package:bp_logger/FileLocationDialog.dart'; // Dialog for information about file location
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart'; // Duh
-import 'package:flutter/services.dart'; // For rejecting everything but digits in the TextField
-import 'package:intl/intl.dart'; // To get date and time
+import 'package:flutter/services.dart'
+    show
+        TextInputFormatter,
+        FilteringTextInputFormatter; // For rejecting everything but digits in the TextField
+import 'package:intl/intl.dart' show DateFormat; // To get date and time
 import 'DriveAbstraction.dart'; // Custom class for reading and writing to Google Drive
-import 'package:googleapis/drive/v3.dart' as drive; // Google Drive API
+import 'package:googleapis/drive/v3.dart' show DriveApi; // Google Drive API
 import 'package:google_sign_in/google_sign_in.dart'
-    as signIn; // For signing in to Google
+    show GoogleSignIn, GoogleSignInAccount; // For signing in to Google
 
 class HomePage extends StatefulWidget {
   const HomePage(
@@ -17,11 +17,11 @@ class HomePage extends StatefulWidget {
       @required this.onSignOut,
       @required this.googleDriveSignIn})
       : super(key: key);
-  final signIn.GoogleSignInAccount account;
-  final signIn.GoogleSignIn googleDriveSignIn;
+  final GoogleSignInAccount account;
+  final GoogleSignIn googleDriveSignIn;
   final void Function(
-    signIn.GoogleSignInAccount,
-    signIn.GoogleSignIn googleDriveSignIn,
+    GoogleSignInAccount,
+    GoogleSignIn googleDriveSignIn,
     bool logOut,
   ) onSignOut;
 
@@ -32,10 +32,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String time = new DateFormat.Hm()
       .format(DateTime.now()); // Time is determined whenever app is launched
-  drive.DriveApi driveApi; // For Google Drive API
+  DriveApi driveApi; // For Google Drive API
   bool isLoading = false; // For making loading bar invisible when not used
   String loadingText = ""; // For showing the current state of the file write
-  signIn.GoogleSignInAccount _account;
+  GoogleSignInAccount _account;
   String language = "English";
   List<String> languageList = [
     "English",

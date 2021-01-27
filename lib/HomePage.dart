@@ -145,14 +145,14 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             children: <Widget>[
               Container(
-                height: 220.0,
+                height: _getDrawerWidth(context) * 0.8,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        height: _getDrawerWidth(context) / 3,
-                        width: _getDrawerWidth(context) / 3,
+                        height: _getDrawerWidth(context) / 2.5,
+                        width: _getDrawerWidth(context) / 2.5,
                         child: GoogleUserCircleAvatar(identity: _account),
                       ),
                       Text(_account.displayName,

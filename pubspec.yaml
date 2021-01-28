@@ -43,6 +43,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: JetbrainsMono
+      fonts:
+        - asset: fonts/JetBrainsMono-VariableFont_wght.ttf
   assets:
     - assets/google_logo.png
 

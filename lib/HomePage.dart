@@ -187,14 +187,12 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.insert_drive_file),
                 title: Text("Access file"),
                 onTap: () async {
-                  final fileID =
-                      await DriveAbstraction.getFileId(driveApi, "log");
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      // custom builder for closing dialog
+                      // Custom builder for closing dialog
                       return FileLocationDialog(
-                        fileID: fileID,
+                        driveApi: driveApi,
                       );
                     },
                   );
@@ -202,10 +200,22 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
-                title: Text("v0.9.0a"),
+                title: Text("About"),
                 hoverColor: Theme.of(context).disabledColor.withAlpha(0x00),
                 enableFeedback: false,
-                onTap: () => print(Theme.of(context).brightness.index),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AboutDialog(
+                        applicationName: "BP Logger",
+                        applicationVersion: "v0.10.0",
+                        applicationLegalese:
+                            "This app is open sourced in Github under the AGPL 3.0 License",
+                      );
+                    },
+                  );
+                },
                 onLongPress: () {
                   if (verboseMode) {
                     verboseMode = false;

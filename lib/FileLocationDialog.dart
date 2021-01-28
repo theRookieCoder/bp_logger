@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:googleapis/drive/v3.dart' show DriveApi; // Google Drive API
+import 'DriveAbstraction.dart';
 
 class FileLocationDialog extends StatefulWidget {
-  const FileLocationDialog({Key key, @required this.fileID}) : super(key: key);
-  final String fileID;
+  const FileLocationDialog({Key key, @required this.driveApi})
+      : super(key: key);
+  final DriveApi driveApi;
 
   @override
   _FileLocationDialogState createState() => _FileLocationDialogState();
@@ -50,9 +53,11 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
                       color: Colors.blue,
                     ),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () {
+                      ..onTap = () async {
+                        final fileID = await DriveAbstraction.getFileId(
+                            widget.driveApi, "log");
                         launch(
-                          "https://docs.google.com/spreadsheets/d/${widget.fileID}/",
+                          "https://docs.google.com/spreadsheets/d/$fileID/",
                         );
                       },
                   ),

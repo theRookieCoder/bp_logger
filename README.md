@@ -6,6 +6,6 @@ After that, BP Logger can add the date (configurable), time, diastolic, and syst
 
 # Distribution
 This app is being distributed using Progressive Web Apps.
-The app should be accessible using any modern browser by going [here](bp-logger-rookie-coder.web.app) or [here](bp-logger-rookie-coder.firebaseapp.com) (websites hosted by Firebase Hosting)  
+The app should be accessible using any modern browser by going [here](https://bp-logger-rookie-coder.web.app/) or [here](https://bp-logger-rookie-coder.firebaseapp.com/) (websites hosted by Firebase Hosting)  
 Then the website can be added to the homescreen which makes the app work just like a native iOS/Android app.  
 This app performs best on high and mid range phones. Low tier phones may struggle but app functionality is not impacted much.

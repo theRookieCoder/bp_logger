@@ -209,7 +209,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext context) {
                       return AboutDialog(
                         applicationName: "BP Logger",
-                        applicationVersion: "v0.10.0",
+                        applicationVersion: "v0.10.1",
                         applicationLegalese:
                             "This app is open sourced in Github under the AGPL 3.0 License",
                       );

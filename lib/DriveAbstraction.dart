@@ -45,7 +45,7 @@ class DriveAbstraction {
       var driveFile = new File(); // Create new file
       driveFile.name = "log.csv"; // called log.csv
       driveFile.mimeType =
-          "application/vnd.google-apps.file"; // mimeType of type file
+          "application/vnd.google-apps.file"; // mimeType of file
       driveFile.parents = [appFolderID];
 
       final text = "Date, Time, Diastolic, Systolic";

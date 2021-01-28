@@ -60,6 +60,21 @@ class _HomePageState extends State<HomePage> {
     driveApi = await DriveAbstraction.createDriveApi(_account);
   }
 
+  SnackBar _correctColouredSnackBar({@required String text}) {
+    return SnackBar(
+      backgroundColor: Theme.of(context).cardColor,
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        text,
+        style: TextStyle(
+            color: Theme.of(context).brightness.index.isOdd
+                ? Colors.black
+                : Colors.white),
+      ),
+      duration: Duration(seconds: 2),
+    );
+  }
+
   // Following runs when the program starts
   @override
   void initState() {
@@ -194,32 +209,14 @@ class _HomePageState extends State<HomePage> {
                 onLongPress: () {
                   if (verboseMode) {
                     verboseMode = false;
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Theme.of(context).cardColor,
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(
-                        "Verbose mode turned off",
-                        style: TextStyle(
-                            color: Theme.of(context).brightness.index.isOdd
-                                ? Colors.black
-                                : Colors.white),
-                      ),
-                      duration: Duration(seconds: 2),
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      _correctColouredSnackBar(text: "Verbose mode turned off"),
+                    );
                   } else {
                     verboseMode = true;
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Theme.of(context).cardColor,
-                      behavior: SnackBarBehavior.floating,
-                      content: Text(
-                        "Verbose mode turned on",
-                        style: TextStyle(
-                            color: Theme.of(context).brightness.index.isOdd
-                                ? Colors.black
-                                : Colors.white),
-                      ),
-                      duration: Duration(seconds: 2),
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      _correctColouredSnackBar(text: "Verbose mode turned on"),
+                    );
                   }
                 },
               ),
@@ -396,16 +393,7 @@ class _HomePageState extends State<HomePage> {
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Theme.of(context).cardColor,
-                    behavior: SnackBarBehavior.floating,
-                    content: Text("File write succeeded",
-                        style: TextStyle(
-                            color: Theme.of(context).brightness.index.isOdd
-                                ? Colors.black
-                                : Colors.white)),
-                    duration: Duration(seconds: 2),
-                  ),
+                  _correctColouredSnackBar(text: "File write succeeded"),
                 );
 
                 textFieldController1.clear();
@@ -417,16 +405,8 @@ class _HomePageState extends State<HomePage> {
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Theme.of(context).cardColor,
-                    behavior: SnackBarBehavior.floating,
-                    content: Text("File write failed",
-                        style: TextStyle(
-                            color: Theme.of(context).brightness.index.isOdd
-                                ? Colors.black
-                                : Colors.white)),
-                    duration: Duration(seconds: 2),
-                  ),
+                  _correctColouredSnackBar(
+                      text: "File write failed, please try again"),
                 );
               }
             }

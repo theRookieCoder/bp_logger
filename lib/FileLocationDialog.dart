@@ -17,13 +17,6 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      /*
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(25),
-        ),
-      ),
-      */
       title: Text(
         'File location',
         textAlign: TextAlign.center,

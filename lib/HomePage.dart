@@ -124,6 +124,12 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.all(10.0),
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
+                onTap: () {
+                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus) {
+                    currentFocus.unfocus();
+                  }
+                },
                 onChanged: (newValue) {
                   setState(() {
                     language = newValue;
@@ -234,104 +240,112 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Invisible button of the same size to make the Text centered
-                Opacity(
-                  opacity: 0.0,
-                  child: IconButton(
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Invisible button of the same size to make the Text centered
+                  Opacity(
+                    opacity: 0.0,
+                    child: IconButton(
+                      icon: Icon(Icons.edit),
+                      iconSize: 30.0,
+                      onPressed: null,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(dateString,
+                        style:
+                            Theme.of(context).textTheme.headline3), // Show date
+                  ),
+                  IconButton(
                     icon: Icon(Icons.edit),
                     iconSize: 30.0,
-                    onPressed: null,
+                    tooltip: "Edit date",
+                    onPressed: () async {
+                      await _selectDate(context);
+                      dateString = DateFormat("d/M/y").format(
+                          date); // Edit button beside date to change date (defaults to today)
+                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(dateString,
-                      style:
-                          Theme.of(context).textTheme.headline3), // Show date
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  iconSize: 30.0,
-                  tooltip: "Edit date",
-                  onPressed: () async {
-                    await _selectDate(context);
-                    dateString = DateFormat("d/M/y").format(
-                        date); // Edit button beside date to change date (defaults to today)
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(time,
+                    style: Theme.of(context).textTheme.headline3), // Show time
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                child: TextField(
+                  maxLength: 3,
+                  controller: textFieldController1,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                  ),
+                  decoration: InputDecoration(
+                    counterText: "",
+                    border: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.lightBlue)),
+                    labelText: 'Diastolic',
+                  ),
+                  // Allow strictly numbers only
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter
+                        .digitsOnly, // Only digits, everything else gets rejected even if typed in
+                  ],
+                  keyboardType: TextInputType.numberWithOptions(
+                      decimal: false, signed: false), // Number only keyboard
+                  onChanged: (text) {
+                    setState(() {
+                      time = new DateFormat.Hm().format(
+                          DateTime.now()); // A hacky way to update the time
+                    });
                   },
                 ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(time,
-                  style: Theme.of(context).textTheme.headline3), // Show time
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-              child: TextField(
-                maxLength: 3, // If your BP is more than 999, how are you alive?
-                controller: textFieldController1,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-                decoration: InputDecoration(
-                  counterText: "",
-                  border: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Colors.lightBlue)),
-                  labelText: 'Diastolic',
-                ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter
-                      .digitsOnly, // Only digits, everything else gets rejected even if typed in
-                ],
-                keyboardType: TextInputType.numberWithOptions(
-                    decimal: false, signed: false), // Number only keyboard
-                onChanged: (text) {
-                  setState(() {
-                    time = new DateFormat.Hm().format(
-                        DateTime.now()); // A hacky way to update the time
-                  });
-                },
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-              child: TextField(
-                maxLength: 3,
-                controller: textFieldController2,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-                decoration: InputDecoration(
-                  counterText: "",
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                child: TextField(
+                  maxLength: 3,
+                  controller: textFieldController2,
+                  style: TextStyle(
+                    fontSize: 25.0,
                   ),
-                  labelText: 'Systolic',
+                  decoration: InputDecoration(
+                    counterText: "",
+                    border: new OutlineInputBorder(
+                      borderSide: new BorderSide(),
+                    ),
+                    labelText: 'Systolic',
+                  ),
+                  // Allow strictly numbers only
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter
+                        .digitsOnly, // Only digits everything else is rejected even of typed in
+                  ],
+                  keyboardType: TextInputType.numberWithOptions(
+                      decimal: false, signed: false), // Number only keyboard
+                  onChanged: (text) {
+                    setState(() {
+                      time = new DateFormat.Hm().format(DateTime.now());
+                    });
+                  },
                 ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter
-                      .digitsOnly, // Only digits everything else is rejected even of typed in
-                ],
-                keyboardType: TextInputType.numberWithOptions(
-                    decimal: false, signed: false), // Number only keyboard
-                onChanged: (text) {
-                  setState(() {
-                    time = new DateFormat.Hm().format(DateTime.now());
-                  });
-                },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: Builder(

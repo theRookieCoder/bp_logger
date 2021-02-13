@@ -53,7 +53,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 actionsPadding: EdgeInsets.all(10.0),
                 actions: <Widget>[
-                  RaisedButton(
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -67,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
             });
         account = null;
         success = false;
-        return;
+        return null;
       });
 
       if (success) {

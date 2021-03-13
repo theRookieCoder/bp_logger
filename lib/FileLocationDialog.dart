@@ -65,7 +65,7 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-            child: RaisedButton(
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
               },

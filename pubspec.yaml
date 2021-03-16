@@ -1,5 +1,5 @@
 name: bp_logger
-description: Log BP values in vsc file
+description: Logs BP values in Google Drive as a Sheets file
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -43,12 +43,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  fonts:
-    - family: JetbrainsMono
-      fonts:
-        - asset: fonts/JetBrainsMono-VariableFont_wght.ttf
-  assets:
-    - assets/google_logo.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

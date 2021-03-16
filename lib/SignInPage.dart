@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignInAccount, GoogleSignIn;
 import 'package:googleapis/drive/v3.dart' show DriveApi;
-import 'DriveAbstraction.dart'; // For signing in to Google
+import 'DriveHelper.dart'; // For signing in to Google
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key key, @required this.onSignIn}) : super(key: key);
@@ -39,7 +39,7 @@ class _SignInPageState extends State<SignInPage> {
         DriveApi.DriveFileScope
       ]); // Sign in to Google with Google Drive access
       success = true;
-      account = await DriveAbstraction.signInWithGoogle(googleDriveSignIn)
+      account = await DriveHelper.signInWithGoogle(googleDriveSignIn)
           .catchError((e) async {
         print("Sign in failed");
         print("Error dump:\n$e");
@@ -70,7 +70,7 @@ class _SignInPageState extends State<SignInPage> {
         return null;
       });
 
-      if (success) {
+      if (success && account != null) {
         break;
       } else {
         continue;

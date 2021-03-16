@@ -1,13 +1,46 @@
+import 'package:bp_logger/FileLocationDialog.dart';
 import 'package:google_sign_in/google_sign_in.dart'
-    show GoogleSignIn, GoogleSignInAccount; // For signing in to Google
+    show
+        GoogleSignIn,
+        GoogleSignInAccount,
+        GoogleUserCircleAvatar; // For signing in to Google
 import 'package:googleapis/drive/v3.dart'
     show DriveApi, File, Media, DownloadOptions; // For accessing Google Drive
 import 'GoogleAuthClient.dart';
 import 'dart:convert' show ascii;
 
-class DriveAbstraction {
-  static String logFileID;
-  static String appFolderID;
+class DriveHelper {
+  String logFileID;
+  String appFolderID;
+  DriveApi driveApi;
+  GoogleSignInAccount account;
+
+  DriveHelper(GoogleSignInAccount recievedAccount) {
+    account = recievedAccount;
+    instantiateApi();
+  }
+
+  instantiateApi() async {
+    // Create an instance of the Drive API using Google account
+    driveApi = await createDriveApi(account);
+    init();
+  }
+
+  GoogleUserCircleAvatar getAvatar() {
+    return GoogleUserCircleAvatar(identity: account);
+  }
+
+  String getDisplayName() {
+    return account.displayName;
+  }
+
+  String getEmail() {
+    return account.email;
+  }
+
+  getFileLocationDialog() {
+    return FileLocationDialog(fileId: logFileID);
+  }
 
   static Future<GoogleSignInAccount> signInWithGoogle(
       GoogleSignIn googleDriveSignIn) async {
@@ -19,7 +52,7 @@ class DriveAbstraction {
     return account;
   }
 
-  static Future<DriveApi> createDriveApi(account) async {
+  Future<DriveApi> createDriveApi(account) async {
     final authHeaders = await account.authHeaders;
     final authenticateClient = GoogleAuthClient(authHeaders);
 
@@ -27,19 +60,19 @@ class DriveAbstraction {
     return driveApi;
   }
 
-  static Future<void> init(DriveApi driveApi) async {
+  Future<void> init() async {
     // IDs of the app's folder and the log file
-    appFolderID = await getFileId(driveApi, "BP Logger");
+    appFolderID = await getFileId("BP Logger");
     if (appFolderID == null) {
       print("BP Logger app folder not found. Creating BP Logger in root...");
       var driveFolder = new File();
       driveFolder.name = "BP Logger";
       driveFolder.mimeType = "application/vnd.google-apps.folder";
       await driveApi.files.create(driveFolder);
-      appFolderID = await getFileId(driveApi, "BP Logger");
+      appFolderID = await getFileId("BP Logger");
     }
 
-    logFileID = await getFileId(driveApi, "log");
+    logFileID = await getFileId("log");
     if (logFileID == null) {
       print("log.csv file not found. Creating log.csv in BP Logger...");
       var driveFile = new File(); // Create new file
@@ -56,14 +89,14 @@ class DriveAbstraction {
       var media = new Media(mediaStream, text.length);
       await driveApi.files
           .create(driveFile, uploadMedia: media); // and upload it to Drive
-      logFileID = await getFileId(driveApi, "log");
+      logFileID = await getFileId("log");
     }
 
     print("Log file ID = $logFileID");
     print("App folder ID = $appFolderID");
   }
 
-  static Future<String> getFileId(DriveApi driveApi, String fileName) async {
+  Future<String> getFileId(String fileName) async {
     // Get fileID of a file using its name
     final search = await driveApi.files.list(
         q: "name='$fileName' and trashed=false",
@@ -76,8 +109,7 @@ class DriveAbstraction {
     return search.files[0].id;
   }
 
-  static Future<List<List<int>>> getFileData(
-      DriveApi driveApi, String fileID) async {
+  Future<List<List<int>>> getFileData(String fileID) async {
     Media fileMedia = await driveApi.files.export(fileID, "text/csv",
         downloadOptions: DownloadOptions
             .FullMedia); // Get contents of a Google Sheets file in csv format
@@ -86,8 +118,22 @@ class DriveAbstraction {
     return dataStreamList; // return it
   }
 
-  static Future<void> appendToFile(DriveApi driveApi, String fileID,
-      String text, List<int> filteredDataStreamList) async {
+  Future<void> appendToFile(
+    String fileID,
+    String text,
+  ) async {
+    List<int> filteredDataStreamList = [];
+
+    final dataStreamList = await getFileData(logFileID);
+
+    if (dataStreamList.length > 1) {
+      for (var i in dataStreamList) {
+        filteredDataStreamList.addAll(i);
+      }
+    } else {
+      filteredDataStreamList = dataStreamList[0];
+    }
+
     final dataString =
         ascii.decode(filteredDataStreamList); // Decode List<int> to a String
 

@@ -1,3 +1,4 @@
+import 'package:bp_logger/DriveHelper.dart';
 import 'package:bp_logger/HomePage.dart';
 import 'package:bp_logger/SignInPage.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   GoogleSignInAccount _account;
   GoogleSignIn _googleDriveSignIn;
+  DriveHelper _driveHelper;
 
   Future<void> _updateUser(
     GoogleSignInAccount account,
@@ -19,12 +21,19 @@ class _LandingPageState extends State<LandingPage> {
     bool logOut,
   ) async {
     if (logOut) {
+      setState(() {
+        _account = account;
+      });
       await googleDriveSignIn.disconnect();
+    } else {
+      if (account != null) {
+        _driveHelper = DriveHelper(account);
+      }
+      setState(() {
+        _googleDriveSignIn = googleDriveSignIn;
+        _account = account;
+      });
     }
-    setState(() {
-      _googleDriveSignIn = googleDriveSignIn;
-      _account = account;
-    });
   }
 
   @override
@@ -35,7 +44,7 @@ class _LandingPageState extends State<LandingPage> {
       ); // Sign in again of user is null
     } else {
       return HomePage(
-        account: _account,
+        driveHelper: _driveHelper,
         onSignOut: _updateUser,
         googleDriveSignIn: _googleDriveSignIn,
       );

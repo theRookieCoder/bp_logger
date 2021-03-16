@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -50,3 +51,4 @@ ios/build/XCBuildData/9173b5836427b17d75c6904493fef7d0-manifest.xcbuild
 ios/build/XCBuildData/build.db
 ios/build/XCBuildData/BuildDescriptionCacheIndex-91252e1459e102eb93c332df51d72740
 .firebase/
+pubspec.lock

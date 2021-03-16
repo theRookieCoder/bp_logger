@@ -12,10 +12,9 @@ jobs:
       - name: Get flutter
         uses: subosito/flutter-action@v1
         with:
-          channel: beta
+          channel: stable
       - name: Build app
         run: |
-          flutter config --enable-web
           flutter pub get
           flutter build web
       - name: Upload build

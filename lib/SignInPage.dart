@@ -36,7 +36,7 @@ class _SignInPageState extends State<SignInPage> {
     GoogleSignIn googleDriveSignIn;
     while (success == false) {
       googleDriveSignIn = GoogleSignIn.standard(scopes: [
-        DriveApi.DriveFileScope
+        DriveApi.DriveFileScope,
       ]); // Sign in to Google with Google Drive access
       success = true;
       account = await DriveHelper.signInWithGoogle(googleDriveSignIn)

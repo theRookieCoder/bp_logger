@@ -38,12 +38,14 @@ class DriveHelper {
     return account.email;
   }
 
-  getFileLocationDialog() {
+  FileLocationDialog getFileLocationDialog() {
     return FileLocationDialog(fileId: logFileID);
   }
 
   static Future<GoogleSignInAccount> signInWithGoogle(
-      GoogleSignIn googleDriveSignIn) async {
+    GoogleSignIn googleDriveSignIn,
+  ) async {
+    // Silent sign in doesn't require user input
     GoogleSignInAccount account = await googleDriveSignIn.signInSilently();
     if (account == null) {
       print("Silent sign in failed");
@@ -89,6 +91,7 @@ class DriveHelper {
       var media = new Media(mediaStream, text.length);
       await driveApi.files
           .create(driveFile, uploadMedia: media); // and upload it to Drive
+
       logFileID = await getFileId("log");
     }
 
@@ -109,45 +112,39 @@ class DriveHelper {
     return search.files[0].id;
   }
 
-  Future<List<List<int>>> getFileData(String fileID) async {
-    Media fileMedia = await driveApi.files.export(fileID, "text/csv",
-        downloadOptions: DownloadOptions
-            .FullMedia); // Get contents of a Google Sheets file in csv format
-    final dataStreamList =
-        await fileMedia.stream.toList(); // Receive the Stream as List
-    return dataStreamList; // return it
+  Future<String> exportFileData(String fileID) async {
+    Media fileMedia = await driveApi.files
+        .export(fileID, "text/csv", downloadOptions: DownloadOptions.FullMedia);
+
+    String fileData;
+
+    await fileMedia.stream.listen((event) {
+      fileData = String.fromCharCodes(event);
+    }).asFuture();
+    return fileData;
   }
 
   Future<void> appendToFile(
     String fileID,
     String text,
   ) async {
-    List<int> filteredDataStreamList = [];
+    final dataString = await exportFileData(logFileID);
 
-    final dataStreamList = await getFileData(logFileID);
-
-    if (dataStreamList.length > 1) {
-      for (var i in dataStreamList) {
-        filteredDataStreamList.addAll(i);
-      }
-    } else {
-      filteredDataStreamList = dataStreamList[0];
-    }
-
-    final dataString =
-        ascii.decode(filteredDataStreamList); // Decode List<int> to a String
-
-    var placeholder = new File(); // Placeholder file for update()
-    Stream<List<int>> mediaStream = Future.value(
-            List.from(ascii.encode("$dataString\n$text")).cast<int>().toList())
-        .asStream()
-        .asBroadcastStream(); // Add existing data and new text data, then make it into a Stream<List<int>> again
+    final dataList =
+        List.from(ascii.encode("$dataString\n$text")).cast<int>().toList();
+    Stream<List<int>> mediaStream =
+        Future.value(dataList).asStream().asBroadcastStream();
     var media = new Media(
-        mediaStream,
-        dataString.length +
-            text.length +
-            "\n".length); // Make mediaStream into a Media for sending
-    await driveApi.files.update(placeholder, logFileID,
-        uploadMedia: media); // Update the existing file with the new data
+      mediaStream,
+      dataList.length,
+    );
+    await driveApi.files
+        .update(new File(), logFileID, uploadMedia: media)
+        .onError((error, stackTrace) {
+      print("Error: $error was caught by DriveHelper");
+      print("This was the stack trace when the exception was caught: ");
+      print(stackTrace);
+      return null;
+    }); // Update the existing file with the new data
   }
 }

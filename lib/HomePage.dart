@@ -32,8 +32,8 @@ class _HomePageState extends State<HomePage> {
 
   double _getDrawerWidth(context) {
     double width = MediaQuery.of(context).size.width * 3 / 4;
-    if (width > 300) {
-      return 300;
+    if (width > 280) {
+      return 280;
     } else {
       return width;
     }
@@ -105,15 +105,26 @@ class _HomePageState extends State<HomePage> {
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
-                height: _getDrawerWidth(context) * 0.7,
+                height: _getDrawerWidth(context) * 0.8,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Container(
-                        height: _getDrawerWidth(context) / 2.5,
-                        width: _getDrawerWidth(context) / 2.5,
-                        child: driveHelper.getAvatar(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Container(
+                          height: _getDrawerWidth(context) / 2.5,
+                          width: _getDrawerWidth(context) / 2.5,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).brightness.index.isEven
+                                    ? Colors.black87
+                                    : Colors.white,
+                                width: 2.0),
+                            shape: BoxShape.circle,
+                          ),
+                          child: driveHelper.getAvatar(),
+                        ),
                       ),
                       // Name of user
                       Text(driveHelper.getDisplayName(),

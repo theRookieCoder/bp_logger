@@ -35,24 +35,9 @@
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
-    <style>
-      h1 {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
-      }
-      h2 {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
-      }
-      p {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
-      }
-    </style>
-    <h1>Loading...</h1>
+    <h1 style="text-align: center; font-family: sans-serif; color: black">
+      Loading...
+    </h1>
 
     <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
@@ -92,6 +77,20 @@
     <script src="main.dart.js" type="application/javascript"></script>
 
     <noscript>
+      <style>
+        h1 {
+          font-family: sans-serif;
+          color: black;
+        }
+        h2 {
+          font-family: sans-serif;
+          color: black;
+        }
+        p {
+          font-family: sans-serif;
+          color: black;
+        }
+      </style>
       <h1>This website only works with Javascript enabled!</h1>
       <h2>
         BP Logger is built on a framework known as Flutter which required

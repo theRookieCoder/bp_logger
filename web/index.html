@@ -34,25 +34,44 @@
     <title>BP Logger</title>
     <link rel="manifest" href="manifest.json" />
   </head>
-  <body>
+  <body style="background-color: #303030">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
     <style>
-      h1 {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
-      }
-      h2 {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
-      }
-      p {
-        text-align: center;
-        font-family: sans-serif;
-        color: black;
+      .centered {
+        height: 500;
+        width: 500;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
     </style>
-    <h1>Loading...</h1>
+    <nav>
+      <div class="nav-wrapper" style="background-color: #212121; height: 5">
+        <a class="brand-logo center">BP Logger</a>
+      </div>
+    </nav>
+    <div class="centered">
+      <div class="preloader-wrapper small active">
+        <div
+          class="spinner-layer spinner-red-only"
+          style="height: 500; width: 500"
+        >
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div>
+          <div class="gap-patch">
+            <div class="circle"></div>
+          </div>
+          <div class="circle-clipper right">
+            <div class="circle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
@@ -92,6 +111,23 @@
     <script src="main.dart.js" type="application/javascript"></script>
 
     <noscript>
+      <style>
+        h1 {
+          text-align: center;
+          font-family: sans-serif;
+          color: black;
+        }
+        h2 {
+          text-align: center;
+          font-family: sans-serif;
+          color: black;
+        }
+        p {
+          text-align: center;
+          font-family: sans-serif;
+          color: black;
+        }
+      </style>
       <h1>This website only works with Javascript enabled!</h1>
       <h2>
         BP Logger is built on a framework known as Flutter which required

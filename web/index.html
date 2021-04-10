@@ -34,44 +34,26 @@
     <title>BP Logger</title>
     <link rel="manifest" href="manifest.json" />
   </head>
-  <body style="background-color: #303030">
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-    />
+  <body>
     <style>
-      .centered {
-        height: 500;
-        width: 500;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+      .loader {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+        image-rendering: -moz-crisp-edges;          /* Firefox                        */
+        image-rendering: -o-crisp-edges;            /* Opera                          */
+        image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+        image-rendering: pixelated;                 /* Chrome */
+        image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+        -ms-interpolation-mode: nearest-neighbor;   /* IE8+  */
       }
     </style>
-    <nav>
-      <div class="nav-wrapper" style="background-color: #212121; height: 5">
-        <a class="brand-logo center">BP Logger</a>
-      </div>
-    </nav>
-    <div class="centered">
-      <div class="preloader-wrapper small active">
-        <div
-          class="spinner-layer spinner-red-only"
-          style="height: 500; width: 500"
-        >
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div>
-          <div class="gap-patch">
-            <div class="circle"></div>
-          </div>
-          <div class="circle-clipper right">
-            <div class="circle"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+    <img src="loading.gif" class="loader" width="200" height="200"></img>
 
     <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:

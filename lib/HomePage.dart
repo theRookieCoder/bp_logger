@@ -28,8 +28,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isLoading = false; // For making loading bar invisible when not used
-  DriveHelper driveHelper;
+  DriveHelper driveHelper; // 'Backend' interface
 
+  // To get 3/4ths of the screen to display the drawer to a specific width on all devices
   double _getDrawerWidth(context) {
     double width = MediaQuery.of(context).size.width * 3 / 4;
     if (width > 280) {
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Snackbar for status of the file write
   SnackBar _correctColouredSnackBar({@required String text}) {
     return SnackBar(
       backgroundColor: Theme.of(context).cardColor,
@@ -61,13 +63,14 @@ class _HomePageState extends State<HomePage> {
     driveHelper = widget.driveHelper;
   }
 
-  static DateTime date =
-      new DateTime.now(); // date variable gets changed by the DatePicker
+  // Date variable gets changed by the DatePicker
+  static DateTime date = new DateTime.now();
   var textFieldController1 =
       TextEditingController(); // Control diastolic TextField
   var textFieldController2 =
       TextEditingController(); // Control systolic TextField
 
+  // Datepicker for electing the date
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -105,6 +108,7 @@ class _HomePageState extends State<HomePage> {
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
+                // Use drawer width to determine drawer header
                 height: _getDrawerWidth(context) * 0.8,
                 child: DrawerHeader(
                   child: Column(

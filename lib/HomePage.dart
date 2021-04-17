@@ -1,34 +1,36 @@
-import 'package:flutter/material.dart'; // Duh
+import 'package:bp_logger/LogOutDialog.dart';
+import "package:flutter/material.dart"; // Duh
 // For rejecting everything but digits in the TextField
-import 'package:flutter/services.dart'
+import "package:flutter/services.dart"
     show TextInputFormatter, FilteringTextInputFormatter;
-import 'package:google_sign_in/google_sign_in.dart'
-    show GoogleSignIn, GoogleSignInAccount;
-import 'package:intl/intl.dart' show DateFormat; // To get date and time
-import 'DriveHelper.dart'; // Backend stuff
+import "package:intl/intl.dart" show DateFormat; // To get date and time
+import "DriveHelper.dart"; // Backend stuff
+import "package:flutter/gestures.dart" show TapGestureRecognizer;
+import "package:url_launcher/url_launcher.dart" show launch;
 
 class HomePage extends StatefulWidget {
   const HomePage({
     Key key,
     @required this.driveHelper,
     @required this.onSignOut,
-    @required this.googleDriveSignIn,
   }) : super(key: key);
   final DriveHelper driveHelper;
-  final GoogleSignIn googleDriveSignIn;
-  final Future<void> Function(
-    GoogleSignInAccount,
-    GoogleSignIn googleDriveSignIn,
-    bool logOut,
-  ) onSignOut;
+  final Future<void> Function() onSignOut;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isLoading = false; // For making loading bar invisible when not used
-  DriveHelper driveHelper; // 'Backend' interface
+  // For date to be changed by datepicker
+  static DateTime date = new DateTime.now();
+  // Control diastolic TextField
+  var textFieldController1 = TextEditingController();
+  // Control systolic TextField
+  var textFieldController2 = TextEditingController();
+  // For making loading bar invisible when not used
+  bool isLoading = false;
+  DriveHelper driveHelper; // "Backend" interface
 
   // To get 3/4ths of the screen to display the drawer to a specific width on all devices
   double _getDrawerWidth(context) {
@@ -63,13 +65,6 @@ class _HomePageState extends State<HomePage> {
     driveHelper = widget.driveHelper;
   }
 
-  // Date variable gets changed by the DatePicker
-  static DateTime date = new DateTime.now();
-  var textFieldController1 =
-      TextEditingController(); // Control diastolic TextField
-  var textFieldController2 =
-      TextEditingController(); // Control systolic TextField
-
   // Datepicker for electing the date
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -79,7 +74,7 @@ class _HomePageState extends State<HomePage> {
       lastDate: DateTime(3000),
     );
     if (picked != null && picked != date) {
-      // Only update if user picked and isn't the same as before
+      // Only update if user picked and isn"t the same as before
       setState(() {
         date = picked;
       });
@@ -143,25 +138,33 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text("Log out"),
-                onTap: () async {
-                  await widget.onSignOut(
-                    null, // Nullify account to go to signInPage
-                    widget
-                        .googleDriveSignIn, // Required to sign out from Google
-                    true, // We want to log out the user so make this true
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return LogOutDialog(logOut: widget.onSignOut);
+                    },
                   );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.insert_drive_file),
+                leading: Icon(Icons.insert_drive_file_outlined),
                 title: Text("Access file"),
-                onTap: () async {
+                onTap: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      // Custom builder for closing dialog
                       return driveHelper.getFileLocationDialog();
                     },
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.contact_support_outlined),
+                title: Text("Get support"),
+                onTap: () {
+                  launch(
+                    "https://therookiecoder.github.io/bp_logger",
                   );
                 },
               ),
@@ -174,9 +177,41 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext context) {
                       return AboutDialog(
                         applicationName: "BP Logger",
-                        applicationVersion: "v1.0.0",
-                        applicationLegalese:
-                            "This app is open sourced in Github under the AGPL 3.0 License",
+                        applicationVersion: "v1.1.0",
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "This app is open sourced ",
+                                    style: Theme.of(context).textTheme.caption,
+                                  ),
+                                  TextSpan(
+                                    text: "in Github",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .caption
+                                        .apply(
+                                          color: Colors.blue,
+                                        ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () async {
+                                        launch(
+                                          "https://www.github.com/theRookieCoder/bp_logger",
+                                        );
+                                      },
+                                  ),
+                                  TextSpan(
+                                    text: " under the AGPL 3.0 License",
+                                    style: Theme.of(context).textTheme.caption,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   );
@@ -230,7 +265,7 @@ class _HomePageState extends State<HomePage> {
                     counterText: "",
                     border: new OutlineInputBorder(
                         borderSide: new BorderSide(color: Colors.lightBlue)),
-                    labelText: 'Diastolic',
+                    labelText: "Diastolic",
                   ),
                   // Allow strictly numbers only
                   inputFormatters: <TextInputFormatter>[
@@ -253,7 +288,7 @@ class _HomePageState extends State<HomePage> {
                   border: new OutlineInputBorder(
                     borderSide: new BorderSide(),
                   ),
-                  labelText: 'Systolic',
+                  labelText: "Systolic",
                 ),
                 // Allow strictly numbers only
                 inputFormatters: <TextInputFormatter>[
@@ -281,7 +316,7 @@ class _HomePageState extends State<HomePage> {
               currentFocus.unfocus();
             }
 
-            // Don't run if values are not filled in
+            // Don"t run if values are not filled in
             if (diastolic != "" && systolic != "") {
               bool success = true;
 

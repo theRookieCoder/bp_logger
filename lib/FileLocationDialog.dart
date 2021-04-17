@@ -61,20 +61,23 @@ class _FileLocationDialogState extends State<FileLocationDialog> {
             "To access the file itself:\n- Open Google Drive\n- Go to My Drive\n- Go to a folder called 'BP Logger'\nThe file there called 'log' is where your data is stored.\n\nMake sure you are signed into the same Google account in Drive that you used in BP Logger",
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                "OK",
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          )
         ],
       ),
+      actionsPadding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+            child: Text(
+              "OK",
+              style: Theme.of(context).textTheme.button,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

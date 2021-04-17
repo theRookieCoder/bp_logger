@@ -10,10 +10,10 @@ import 'GoogleAuthClient.dart';
 import 'dart:convert' show ascii;
 
 class DriveHelper {
-  String logFileID;
-  String appFolderID;
-  DriveApi driveApi;
-  GoogleSignInAccount account;
+  String logFileID; // FileID of log file
+  String appFolderID; // FileID of the folder the log file is in
+  DriveApi driveApi; // Google Drive API
+  GoogleSignInAccount account; // Google user account
 
   DriveHelper(GoogleSignInAccount recievedAccount) {
     account = recievedAccount;
@@ -114,7 +114,7 @@ class DriveHelper {
 
   Future<String> exportFileData(String fileID) async {
     Media fileMedia = await driveApi.files
-        .export(fileID, "text/csv", downloadOptions: DownloadOptions.FullMedia);
+        .export(fileID, "text/csv", downloadOptions: DownloadOptions.fullMedia);
 
     String fileData;
 

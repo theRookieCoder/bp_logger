@@ -18,7 +18,7 @@ class _LogOutDialogState extends State<LogOutDialog> {
       title: Text(
         "Logout instructions",
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline4,
+        style: Theme.of(context).textTheme.headline4.apply(fontSizeFactor: 0.9),
       ),
       content: Text(
         "To logout, follow the steps below\n  1. Click the logout button below\n  2. Close the website/app in the task switcher\n  3. Open the app again and sign in",

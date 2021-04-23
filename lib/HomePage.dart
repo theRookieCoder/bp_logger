@@ -126,8 +126,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       // Name of user
-                      Text(driveHelper.getDisplayName(),
-                          style: Theme.of(context).textTheme.headline5),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(driveHelper.getDisplayName(),
+                            style: Theme.of(context).textTheme.headline4),
+                      ),
                       // Email ID of user
                       Text(driveHelper.getEmail(),
                           style: Theme.of(context).textTheme.headline6)

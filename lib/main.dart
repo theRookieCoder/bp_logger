@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignInAccount, GoogleSignIn;
 import 'package:googleapis/drive/v3.dart' show DriveApi;
+import 'dart:io' show Platform;
 import 'DriveHelper.dart';
 
 // Sign in with Google and then start the app
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid || Platform.isIOS) {
+    WidgetsFlutterBinding
+        .ensureInitialized(); // Web sign in does not require Flutter engine
+  }
   bool success = false;
   GoogleSignInAccount account;
   GoogleSignIn googleDriveSignIn;

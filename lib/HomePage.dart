@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext context) {
                       return AboutDialog(
                         applicationName: "BP Logger",
-                        applicationVersion: "v1.1.0",
+                        applicationVersion: "Version ${driveHelper.version}",
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(left: 20),

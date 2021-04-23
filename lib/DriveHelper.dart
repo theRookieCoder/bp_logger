@@ -8,12 +8,14 @@ import 'package:googleapis/drive/v3.dart'
     show DriveApi, File, Media, DownloadOptions; // For accessing Google Drive
 import 'GoogleAuthClient.dart';
 import 'dart:convert' show ascii;
+import 'package:package_info/package_info.dart';
 
 class DriveHelper {
   String logFileID; // FileID of log file
   String appFolderID; // FileID of the folder the log file is in
   DriveApi driveApi; // Google Drive API
   GoogleSignInAccount account; // Google user account
+  String version; // Version of app for about
 
   DriveHelper(GoogleSignInAccount recievedAccount) {
     account = recievedAccount;
@@ -97,6 +99,10 @@ class DriveHelper {
 
     print("Log file ID = $logFileID");
     print("App folder ID = $appFolderID");
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      version = packageInfo.version;
+      print("App version = $version");
+    });
   }
 
   Future<String> getFileId(String fileName) async {

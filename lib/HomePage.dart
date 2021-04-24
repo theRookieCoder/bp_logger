@@ -1,12 +1,13 @@
-import 'package:bp_logger/LogOutDialog.dart';
-import "package:flutter/material.dart"; // Duh
+import 'LogOutDialog.dart'; // For logging out
+import "package:flutter/material.dart"; // UI
 // For rejecting everything but digits in the TextField
 import "package:flutter/services.dart"
     show TextInputFormatter, FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat; // To get date and time
 import "DriveHelper.dart"; // Backend stuff
-import "package:flutter/gestures.dart" show TapGestureRecognizer;
-import "package:url_launcher/url_launcher.dart" show launch;
+import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
+import "package:url_launcher/url_launcher.dart"
+    show launch; // For opening links
 
 class HomePage extends StatefulWidget {
   const HomePage({

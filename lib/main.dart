@@ -1,14 +1,14 @@
 import 'HomePage.dart';
-import 'package:flutter/material.dart';
+import 'DriveHelper.dart';
+import 'package:flutter/material.dart'; // UI
 import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignInAccount, GoogleSignIn;
 import 'package:googleapis/drive/v3.dart' show DriveApi;
-import 'dart:io' show Platform;
-import 'DriveHelper.dart';
+import 'package:flutter/foundation.dart' show kIsWeb; // For checking if web
 
 // Sign in with Google and then start the app
 Future<void> main() async {
-  if (Platform.isAndroid || Platform.isIOS) {
+  if (!kIsWeb) {
     WidgetsFlutterBinding
         .ensureInitialized(); // Web sign in does not require Flutter engine
   }

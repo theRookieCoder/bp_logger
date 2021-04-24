@@ -1,14 +1,15 @@
-import 'package:bp_logger/FileLocationDialog.dart';
+import 'FileLocationDialog.dart' show FileLocationDialog; // For File Location
+import 'GoogleAuthClient.dart' show GoogleAuthClient; // http stuff
 import 'package:google_sign_in/google_sign_in.dart'
     show
-        GoogleSignIn,
-        GoogleSignInAccount,
-        GoogleUserCircleAvatar; // For signing in to Google
+        GoogleSignIn, // Google account
+        GoogleSignInAccount, // Google sign in token (?)
+        GoogleUserCircleAvatar; // Google avatar
 import 'package:googleapis/drive/v3.dart'
     show DriveApi, File, Media, DownloadOptions; // For accessing Google Drive
-import 'GoogleAuthClient.dart';
-import 'dart:convert' show ascii;
-import 'package:package_info/package_info.dart';
+import 'dart:convert' show ascii; // For encoding file
+// For getting version number
+import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 class DriveHelper {
   String logFileID; // FileID of log file

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart' show TapGestureRecognizer;
-import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:flutter/material.dart'; // UI
+import 'package:flutter/gestures.dart' show TapGestureRecognizer; // For link
+import 'package:url_launcher/url_launcher.dart' show launch; // For opening link
 
 class FileLocationDialog extends StatefulWidget {
   const FileLocationDialog({

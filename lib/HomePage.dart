@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = false;
   DriveHelper driveHelper; // "Backend" interface
 
-  // To get 3/4ths of the screen to display the drawer to a specific width on all devices
+  // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
   double _getDrawerWidth(context) {
     double width = MediaQuery.of(context).size.width * 3 / 4;
     if (width > 280) {
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
     driveHelper = widget.driveHelper;
   }
 
-  // Datepicker for electing the date
+  // Datepicker for selecting the date
   _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
@@ -82,6 +82,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Function for loading the progress indicator
+  Widget progressHide() {
+    return isLoading ? LinearProgressIndicator() : Container();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,10 +94,7 @@ class _HomePageState extends State<HomePage> {
         bottom: PreferredSize(
           // PreferredSize is expected by bottom argument
           preferredSize: Size(double.infinity, 0.0),
-          child: Opacity(
-            opacity: isLoading ? 1.0 : 0.0, // Hide if false, show if true
-            child: LinearProgressIndicator(),
-          ),
+          child: progressHide(),
         ),
         title: Text("BP Logger"),
       ),
@@ -232,20 +234,14 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Invisible button of the same size to make the Text centered
-                Opacity(
-                  opacity: 0.0,
-                  child: IconButton(
-                    icon: Icon(Icons.edit),
-                    iconSize: 30.0,
-                    onPressed: null,
-                  ),
-                ),
+                // Invisible container to center the text
+                Container(width: 50),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(DateFormat("d/M/y").format(date),
-                      style:
-                          Theme.of(context).textTheme.headline3), // Show date
+                  child: Text(
+                    DateFormat("d/M/y").format(date),
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
                 ),
                 IconButton(
                   icon: Icon(Icons.edit),

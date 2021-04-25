@@ -1,4 +1,3 @@
-import 'FileLocationDialog.dart' show FileLocationDialog; // For File Location
 import 'GoogleAuthClient.dart' show GoogleAuthClient; // http stuff
 import 'package:google_sign_in/google_sign_in.dart'
     show
@@ -10,6 +9,7 @@ import 'package:googleapis/drive/v3.dart'
 import 'dart:convert' show ascii; // For encoding file
 // For getting version number
 import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
+import 'package:url_launcher/url_launcher.dart' show launch;
 
 class DriveHelper {
   String logFileID; // FileID of log file
@@ -41,8 +41,10 @@ class DriveHelper {
     return account.email;
   }
 
-  FileLocationDialog getFileLocationDialog() {
-    return FileLocationDialog(fileId: logFileID);
+  void showLogFile() {
+    launch(
+      "https://docs.google.com/spreadsheets/d/$logFileID/",
+    );
   }
 
   static Future<GoogleSignInAccount> signInWithGoogle(

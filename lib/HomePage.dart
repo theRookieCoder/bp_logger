@@ -76,9 +76,7 @@ class _HomePageState extends State<HomePage> {
     );
     if (picked != null && picked != date) {
       // Only update if user picked and isn"t the same as before
-      setState(() {
-        date = picked;
-      });
+      setState(() => date = picked);
     }
   }
 
@@ -156,23 +154,13 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.insert_drive_file_outlined),
                 title: Text("Access file"),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return driveHelper.getFileLocationDialog();
-                    },
-                  );
-                },
+                onTap: driveHelper.showLogFile,
               ),
               ListTile(
                 leading: Icon(Icons.contact_support_outlined),
                 title: Text("Get support"),
-                onTap: () {
-                  launch(
-                    "https://therookiecoder.github.io/bp_logger",
-                  );
-                },
+                onTap: () =>
+                    launch("https://therookiecoder.github.io/bp_logger"),
               ),
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
@@ -320,9 +308,7 @@ class _HomePageState extends State<HomePage> {
             if (diastolic != "" && systolic != "") {
               bool success = true;
 
-              setState(() {
-                isLoading = true; // Start loading animation
-              });
+              setState(() => isLoading = true);
 
               String text =
                   "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic"; // Text that has to be appended
@@ -337,9 +323,7 @@ class _HomePageState extends State<HomePage> {
                 success = false;
               });
 
-              setState(() {
-                isLoading = false;
-              });
+              setState(() => isLoading = false);
 
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(

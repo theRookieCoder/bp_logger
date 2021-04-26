@@ -10,4 +10,6 @@ After that, BP Logger can add the date, time, diastolic, and systolic values to 
 
 This app is being distributed using IPAs for sideloading via AltStore and APKs for Android. These can be downloaded in Github releases  
 Alternatively, the app should be accessible using any modern browser by going [here](https://bp-logger-rookie-coder.web.app/) or [here](https://bp-logger-rookie-coder.firebaseapp.com/) (websites hosted by Firebase Hosting)  
-The website can also be added to the homescreen which makes the app work similarly to a native iOS/Android app with much worse perfromance and loading tiems.
+The website can also be added to the homescreen which makes the app work similarly to a native iOS/Android app with much worse perfromance and loading times.
+
+Beta: You can also use (this link) [itms-services://?action=download-manifest&amp; url=https://therookiecoder.github.io/bp_logger/bp_logger.plist]

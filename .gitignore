@@ -40,15 +40,6 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
-ios/build/XCBuildData/8e34844a1e078714d3b57e230bd71404-desc.xcbuild
-ios/build/XCBuildData/8e34844a1e078714d3b57e230bd71404-manifest.xcbuild
-ios/build/XCBuildData/491f25d6fbdc597b5b9922d5ed5ba713-desc.xcbuild
-ios/build/XCBuildData/491f25d6fbdc597b5b9922d5ed5ba713-manifest.xcbuild
-ios/build/XCBuildData/0792acc84701469da27f843ef03490f2-desc.xcbuild
-ios/build/XCBuildData/0792acc84701469da27f843ef03490f2-manifest.xcbuild
-ios/build/XCBuildData/9173b5836427b17d75c6904493fef7d0-desc.xcbuild
-ios/build/XCBuildData/9173b5836427b17d75c6904493fef7d0-manifest.xcbuild
-ios/build/XCBuildData/build.db
-ios/build/XCBuildData/BuildDescriptionCacheIndex-91252e1459e102eb93c332df51d72740
+ios/build/
 .firebase/
 pubspec.lock

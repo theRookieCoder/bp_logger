@@ -8,6 +8,7 @@ import "DriveHelper.dart"; // Backend stuff
 import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
 import "package:url_launcher/url_launcher.dart"
     show launch; // For opening links
+import 'FileAppendDialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
     @required this.driveHelper,
     @required this.onSignOut,
   }) : super(key: key);
+
   final DriveHelper driveHelper;
   final Future<void> Function() onSignOut;
 
@@ -29,8 +31,6 @@ class _HomePageState extends State<HomePage> {
   var textFieldController1 = TextEditingController();
   // Control systolic TextField
   var textFieldController2 = TextEditingController();
-  // For making loading bar invisible when not used
-  bool isLoading = false;
   DriveHelper driveHelper; // "Backend" interface
 
   // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
@@ -41,22 +41,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       return width;
     }
-  }
-
-  // Snackbar for status of the file write
-  SnackBar _correctColouredSnackBar({@required String text}) {
-    return SnackBar(
-      backgroundColor: Theme.of(context).cardColor,
-      behavior: SnackBarBehavior.floating,
-      content: Text(
-        text,
-        style: TextStyle(
-            color: Theme.of(context).brightness.index.isOdd
-                ? Colors.black
-                : Colors.white54),
-      ),
-      duration: Duration(seconds: 2),
-    );
   }
 
   // Following runs when the program starts
@@ -80,22 +64,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Function for loading the progress indicator
-  Widget progressHide() {
-    return isLoading ? LinearProgressIndicator() : Container();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        bottom: PreferredSize(
-          // PreferredSize is expected by bottom argument
-          preferredSize: Size(double.infinity, 0.0),
-          child: progressHide(),
-        ),
-        title: Text("BP Logger"),
-      ),
+      appBar: AppBar(title: Text("BP Logger")),
       drawer: Container(
         // make 75% of the screen occupied by the drawer
         width: _getDrawerWidth(context),
@@ -244,24 +216,24 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
               child: TextField(
-                  maxLength: 3,
-                  controller: textFieldController1,
-                  style: TextStyle(
-                    fontSize: 25.0,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: "",
-                    border: new OutlineInputBorder(
-                        borderSide: new BorderSide(color: Colors.lightBlue)),
-                    labelText: "Diastolic",
-                  ),
-                  // Allow strictly numbers only
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter
-                        .digitsOnly, // Only digits, everything else gets rejected even if typed in
-                  ],
-                  keyboardType: TextInputType.number // Number only keyboard
-                  ),
+                maxLength: 3,
+                controller: textFieldController1,
+                style: TextStyle(
+                  fontSize: 25.0,
+                ),
+                decoration: InputDecoration(
+                  counterText: "",
+                  border: new OutlineInputBorder(
+                      borderSide: new BorderSide(color: Colors.lightBlue)),
+                  labelText: "Diastolic",
+                ),
+                // Allow strictly numbers only
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter
+                      .digitsOnly, // Only digits, everything else gets rejected even if typed in
+                ],
+                keyboardType: TextInputType.number, // Number only keyboard
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
@@ -298,45 +270,30 @@ class _HomePageState extends State<HomePage> {
             String diastolic = textFieldController1.text;
             String systolic = textFieldController2.text;
 
-            // Dismiss keyboard once button is pressed
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-
             // Don"t run if values are not filled in
             if (diastolic != "" && systolic != "") {
-              bool success = true;
-
-              setState(() => isLoading = true);
+              // Dismiss keyboard once button is pressed
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
 
               String text =
                   "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic"; // Text that has to be appended
 
-              await driveHelper
-                  .appendToFile(
-                driveHelper.logFileID,
-                text,
-              )
-                  .catchError((e) {
-                print(e);
-                success = false;
-              });
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return FileAppendDialog(
+                    text: text,
+                    driveHelper: driveHelper,
+                  );
+                },
+                barrierDismissible: false,
+              );
 
-              setState(() => isLoading = false);
-
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  _correctColouredSnackBar(text: "File write succeeded"),
-                );
-                textFieldController1.clear();
-                textFieldController2.clear();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  _correctColouredSnackBar(
-                      text: "File write failed, please try again"),
-                );
-              }
+              textFieldController1.clear();
+              textFieldController2.clear();
             }
           },
         ),

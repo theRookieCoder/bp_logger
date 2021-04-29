@@ -17,20 +17,26 @@ Future<void> main() async {
   GoogleSignIn googleDriveSignIn;
   String error;
 
-  for (int i = 0; i < 3 && success == false; i++) {
+  for (int i = 0; i < 2 && success == false; i++) {
     print(i);
     googleDriveSignIn = GoogleSignIn.standard(scopes: [
       DriveApi.driveFileScope,
     ]); // Sign in to Google with Google Drive access
-    success = true;
     account = await DriveHelper.signInWithGoogle(googleDriveSignIn)
         .catchError((e) async {
       print("Sign in failed");
       print("Error dump:\n$e");
       account = null;
-      success = false;
       error = e.toString();
     });
+
+    if (account == null) {
+      success = false;
+    } else if (error == null) {
+      error = "User dismissed";
+    } else {
+      success = true;
+    }
   }
 
   runApp(
@@ -77,10 +83,13 @@ class FailedPage extends StatelessWidget {
         title: Text("BP Logger"),
       ),
       body: Center(
-        child: Text(
-          "BP Logger tried to sign in and failed for more than 3 times\n" +
-              "Error: $error",
-          style: Theme.of(context).textTheme.headline5,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            "BP Logger tried to sign in and failed for more than 2 times\n" +
+                "Error: $error",
+            style: Theme.of(context).textTheme.headline5,
+          ),
         ),
       ),
     );

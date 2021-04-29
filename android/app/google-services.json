@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:732045653207:android:3557a7f2104d4b550b2c92",
+        "mobilesdk_app_id": "1:732045653207:android:082efb573b19be830b2c92",
         "android_client_info": {
           "package_name": "com.therookiecoder.bp_logger"
         }
       },
       "oauth_client": [
         {
-          "client_id": "732045653207-srml9ttssv3t9d41k9mnbaf2q7c20o94.apps.googleusercontent.com",
+          "client_id": "732045653207-sahs6kb0jl7kgp3ral4gj08t9nl54f25.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.therookiecoder.bp_logger",
-            "certificate_hash": "122af5045334f3be928c0cd3d7dcccc413936685"
+            "certificate_hash": "1b575622f213ee64499766976ab8c2b80a5239de"
           }
         },
         {

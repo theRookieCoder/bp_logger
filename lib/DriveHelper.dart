@@ -20,12 +20,6 @@ class DriveHelper {
 
   DriveHelper(GoogleSignInAccount recievedAccount) {
     account = recievedAccount;
-    instantiateApi();
-  }
-
-  instantiateApi() async {
-    // Create an instance of the Drive API using Google account
-    driveApi = await createDriveApi(account);
     init();
   }
 
@@ -68,6 +62,7 @@ class DriveHelper {
   }
 
   Future<void> init() async {
+    driveApi = await createDriveApi(account);
     // IDs of the app's folder and the log file
     appFolderID = await getFileId("BP Logger");
     if (appFolderID == null) {

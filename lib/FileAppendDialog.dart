@@ -43,6 +43,10 @@ class _FileAppendDialogState extends State<FileAppendDialog>
   Widget build(BuildContext context) {
     return AlertDialog(
       content: FutureBuilder(
+        future: widget.driveHelper.appendToFile(
+          widget.driveHelper.logFileID,
+          widget.text,
+        ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
@@ -135,10 +139,6 @@ class _FileAppendDialogState extends State<FileAppendDialog>
             );
           }
         },
-        future: widget.driveHelper.appendToFile(
-          widget.driveHelper.logFileID,
-          widget.text,
-        ),
       ),
     );
   }

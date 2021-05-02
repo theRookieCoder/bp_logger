@@ -25,12 +25,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // For date to be changed by datepicker
   static DateTime date = new DateTime.now();
-  // Control diastolic TextField
-  var textFieldController1 = TextEditingController();
-  // Control systolic TextField
-  var textFieldController2 = TextEditingController();
+  var textFieldController1 = TextEditingController(); // Diastolic
+  var textFieldController2 = TextEditingController(); // Systolic
   DriveHelper driveHelper; // "Backend" interface
 
   // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
@@ -43,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Following runs when the program starts
+  // Runs when the program starts
   @override
   void initState() {
     super.initState();
@@ -69,32 +66,24 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: Text("BP Logger")),
       drawer: Container(
-        // make 75% of the screen occupied by the drawer
         width: _getDrawerWidth(context),
         child: Drawer(
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
-                // Use drawer width to determine drawer header
+                // Use drawer width to determine drawer header size
                 height: _getDrawerWidth(context) * 0.8,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
+                      // Profile picture of user
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Container(
                           height: _getDrawerWidth(context) / 2.5,
                           width: _getDrawerWidth(context) / 2.5,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).brightness.index.isEven
-                                    ? Colors.black87
-                                    : Colors.white,
-                                width: 2.0),
-                            shape: BoxShape.circle,
-                          ),
                           child: driveHelper.getAvatar(),
                         ),
                       ),
@@ -111,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+              // For logging out
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text("Log out"),
@@ -123,17 +113,20 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+              // For showing the log file
               ListTile(
                 leading: Icon(Icons.insert_drive_file_outlined),
                 title: Text("Access file"),
                 onTap: driveHelper.showLogFile,
               ),
+              // For opening the support page
               ListTile(
                 leading: Icon(Icons.contact_support_outlined),
                 title: Text("Get support"),
                 onTap: () =>
                     launch("https://therookiecoder.github.io/bp_logger"),
               ),
+              // For showing information about the app e.g. version
               ListTile(
                 leading: Icon(Icons.info_outline_rounded),
                 title: Text("About"),
@@ -196,6 +189,7 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 // Invisible container to center the text
                 Container(width: 50),
+                // For displaying the date
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(
@@ -203,6 +197,7 @@ class _HomePageState extends State<HomePage> {
                     style: Theme.of(context).textTheme.headline3,
                   ),
                 ),
+                // For changing the date
                 IconButton(
                   icon: Icon(Icons.edit),
                   iconSize: 30.0,
@@ -213,6 +208,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
+            // For entering the diastolic value
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
               child: TextField(
@@ -223,18 +219,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 decoration: InputDecoration(
                   counterText: "",
-                  border: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Colors.lightBlue)),
+                  border: new OutlineInputBorder(borderSide: new BorderSide()),
                   labelText: "Diastolic",
                 ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter
-                      .digitsOnly, // Only digits, everything else gets rejected even if typed in
-                ],
+                // Only digits, everything else gets rejected even if typed in
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number, // Number only keyboard
               ),
             ),
+            // For entering the systolic value
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
               child: TextField(
@@ -245,16 +238,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 decoration: InputDecoration(
                   counterText: "",
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(),
-                  ),
+                  border: new OutlineInputBorder(borderSide: new BorderSide()),
                   labelText: "Systolic",
                 ),
-                // Allow strictly numbers only
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter
-                      .digitsOnly, // Only digits everything else is rejected even of typed in
-                ],
+                // Only digits everything else is rejected even of typed in
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number, // Number only keyboard
               ),
             ),

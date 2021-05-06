@@ -20,7 +20,6 @@ class DriveHelper {
 
   DriveHelper(GoogleSignInAccount recievedAccount) {
     account = recievedAccount;
-    init();
   }
 
   GoogleUserCircleAvatar getAvatar() {

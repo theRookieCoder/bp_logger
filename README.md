@@ -6,8 +6,61 @@ BP Logger is a Flutter app that allows you to keep track of your BP by logging i
 To use BP Logger, you must first sign in with Google. Then BP Logger will use your Google account to access your Google Drive (with your permission).  
 After that, BP Logger can add the date, time, diastolic, and systolic values to a GSheets file called log.
 
-## Distribution
+## Building
 
-This app is being distributed using IPAs for sideloading via AltStore and APKs for Android. These can be downloaded in Github releases  
-Alternatively, the app should be accessible using any modern browser by going [here](https://bp-logger-rookie-coder.web.app/) or [here](https://bp-logger-rookie-coder.firebaseapp.com/) (websites hosted by Firebase Hosting)  
-The website can also be added to the homescreen which makes the app work similarly to a native iOS/Android app with much worse perfromance and loading times.
+If you want to install the app by building from source:
+
+- Install Dart and Flutter SDK on your computer, they're pretty big
+- Download the source files using `gh repo clone theRookieCoder/bp_logger`
+- `cd` into the source folder
+- Connect your Android or iPhone using a usb cable (or wirelessly if you know how to do that)
+- Check that Flutter can see your phone by running `flutter devices`
+- Run `flutter run --release`
+
+## Installing
+
+Currently, BP Logger is not available in any app stores and hence has to sideloaded.  
+
+You can add the [website](https://bp-logger-rookie-coder.web.app) to your homescreen but this takes forever to load and does not perform very well (not that that matters much anyway)
+
+### Android
+
+You can sideload the Android version of BP Logger fairly easily.
+
+- Firstly, head to the releases page in the right sidebar
+
+- It should open up to the latest version
+
+- Under assets, find a file called `bp_logger_x.x.x.apk` make sure the file ends in `apk`
+
+- Simply click on it to download it
+
+- Some browsers might warn you that `apk`s may be dangerous. Don't worry my app is malware free. If you are skeptical, simply browse through my code, it is open source after all
+
+- After proceeding, the file should be downloaded
+
+- Click on it and the package installer should run, installing BP Logger
+
+- You can then launch the app like any other app
+
+  > Note
+  >
+  > Updating sideloaded apps is not possible. You simply have to reinstall them
+
+### iOS
+
+Sideloading on iOS is not easy, and neither is it easy for me to publish my app in the App Store.  
+
+There are 2 ways of sideloading. The easiest is using AltStore
+
+> You will need a Windows and Mac to use the AltStore method
+
+- Follow the instructions on AltStore's [website](https://altstore.io/faq/)
+- Once, you have the AltStore app on your iPhone, go to the Apps page and click the add icon
+- Choose the ipad file you downloaded from github releases
+- It should install and as long as your iPhone is connected to your computer once a week, it should renew
+
+You can also the variety of other method, such as [this](installonair.com) website, or building from source
+
+
+

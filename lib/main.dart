@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignInAccount, GoogleSignIn;
 import 'package:googleapis/drive/v3.dart' show DriveApi;
 import 'package:flutter/foundation.dart' show kIsWeb; // For checking if web
+import 'package:google_fonts/google_fonts.dart'; // For monospaced font
 
 // Sign in with Google and then start the app
 Future<void> main() async {
@@ -59,11 +60,41 @@ Widget screen(
   if (failed) {
     return FailedPage(error: error.toString());
   } else {
-    return HomePage(
-      driveHelper: DriveHelper(account),
-      onSignOut: () async {
-        await googleSignIn
-            .disconnect(); // Disconnect the user (signing out does not allow you to select a user)
+    DriveHelper driveHelper = DriveHelper(account);
+
+    return FutureBuilder(
+      future: driveHelper.init(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            !snapshot.hasError) {
+          return HomePage(
+            driveHelper: driveHelper,
+            onSignOut: () async {
+              await googleSignIn
+                  .disconnect(); // Disconnect the user (signing out does not allow you to select a user)
+            },
+          );
+        } else if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.hasError) {
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              "BP Logger has encountered an unknown error. Please restart the app",
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          );
+        } else {
+          return Scaffold(
+            backgroundColor: Colors.grey[850],
+            body: Center(
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: CircularProgressIndicator(strokeWidth: 10),
+              ),
+            ),
+          );
+        }
       },
     );
   }
@@ -83,13 +114,25 @@ class FailedPage extends StatelessWidget {
         title: Text("BP Logger"),
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            "BP Logger tried to sign in and failed for more than 2 times\n" +
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                "BP Logger tried to sign in and failed for more than 2 times",
+                style: Theme.of(context).textTheme.headline5,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
                 "Error: $error",
-            style: Theme.of(context).textTheme.headline5,
-          ),
+                style: GoogleFonts.robotoMono(),
+              ),
+            )
+          ],
         ),
       ),
     );

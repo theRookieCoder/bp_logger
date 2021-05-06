@@ -1,14 +1,14 @@
-import 'LogOutDialog.dart'; // For logging out
 import "package:flutter/material.dart"; // UI
 // For rejecting everything but digits in the TextField
 import "package:flutter/services.dart"
-    show TextInputFormatter, FilteringTextInputFormatter;
+    show FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat; // To get date and time
 import "DriveHelper.dart"; // Backend stuff
 import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
 import "package:url_launcher/url_launcher.dart"
     show launch; // For opening links
 import 'FileAppendDialog.dart';
+import 'LogOutDialog.dart'; // For logging out
 
 class HomePage extends StatefulWidget {
   const HomePage({

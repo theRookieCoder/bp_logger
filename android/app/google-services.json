@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "732045653207-sahs6kb0jl7kgp3ral4gj08t9nl54f25.apps.googleusercontent.com",
+          "client_id": "732045653207-435fjefs2e8vgr0ca157oqctc3p24c7s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.therookiecoder.bp_logger",
-            "certificate_hash": "1b575622f213ee64499766976ab8c2b80a5239de"
+            "certificate_hash": "0a0c9a8ee8d98541ad32383aefb4241cfb4a56f1"
           }
         },
         {

@@ -27,7 +27,7 @@ class _FileAppendDialogState extends State<FileAppendDialog>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: 700),
     );
 
     _animation = new Tween<double>(

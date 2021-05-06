@@ -17,30 +17,21 @@ class DriveHelper {
   DriveApi driveApi; // Google Drive API
   GoogleSignInAccount account; // Google user account
   String version; // Version of app for about
+  GoogleSignIn signInScopes; // For signing out
 
-  DriveHelper(GoogleSignInAccount recievedAccount) {
-    account = recievedAccount;
-  }
+  DriveHelper();
 
-  GoogleUserCircleAvatar getAvatar() {
-    return GoogleUserCircleAvatar(identity: account);
-  }
+  GoogleUserCircleAvatar getAvatar() =>
+      GoogleUserCircleAvatar(identity: account);
 
-  String getDisplayName() {
-    return account.displayName;
-  }
+  String getDisplayName() => account.displayName;
 
-  String getEmail() {
-    return account.email;
-  }
+  String getEmail() => account.email;
 
-  void showLogFile() {
-    launch(
-      "https://docs.google.com/spreadsheets/d/$logFileID/",
-    );
-  }
+  void showLogFile() =>
+      launch("https://docs.google.com/spreadsheets/d/$logFileID/");
 
-  static Future<GoogleSignInAccount> signInWithGoogle(
+  Future<GoogleSignInAccount> signInWithGoogle(
     GoogleSignIn googleDriveSignIn,
   ) async {
     // Silent sign in doesn't require user input
@@ -60,46 +51,63 @@ class DriveHelper {
     return driveApi;
   }
 
-  Future<void> init() async {
-    driveApi = await createDriveApi(account);
-    // IDs of the app's folder and the log file
-    appFolderID = await getFileId("BP Logger");
-    if (appFolderID == null) {
-      print("BP Logger app folder not found. Creating BP Logger in root...");
-      var driveFolder = new File();
-      driveFolder.name = "BP Logger";
-      driveFolder.mimeType = "application/vnd.google-apps.folder";
-      await driveApi.files.create(driveFolder);
-      appFolderID = await getFileId("BP Logger");
-    }
+  Future<void> signOut() async => await signInScopes.disconnect();
 
-    logFileID = await getFileId("log");
-    if (logFileID == null) {
-      print("log.csv file not found. Creating log.csv in BP Logger...");
-      var driveFile = new File(); // Create new file
-      driveFile.name = "log.csv"; // called log.csv
-      driveFile.mimeType =
-          "application/vnd.google-apps.file"; // mimeType of file
-      driveFile.parents = [appFolderID];
+  Future<void> signInAndInit() async {
+    // Sign in first
+    signInScopes = GoogleSignIn.standard(
+      scopes: [DriveApi.driveFileScope],
+    );
+    account = await signInWithGoogle(signInScopes).catchError((e) => throw e);
 
-      final text = "Date, Time, Diastolic, Systolic";
-      Stream<List<int>> mediaStream =
-          Future.value(List.from(ascii.encode(text)).cast<int>().toList())
-              .asStream()
-              .asBroadcastStream();
-      var media = new Media(mediaStream, text.length);
-      await driveApi.files
-          .create(driveFile, uploadMedia: media); // and upload it to Drive
+    // Then initialise all the variables
 
-      logFileID = await getFileId("log");
-    }
+    // 1. Create the drive API
+    driveApi = await createDriveApi(account).catchError((e) => throw e);
+
+    // 2. Get the app's folder ID
+    appFolderID = await getFileId("BP Logger").catchError(
+      (e) async {
+        print("BP Logger app folder not found. Creating BP Logger in root...");
+        var driveFolder = new File();
+        driveFolder.name = "BP Logger";
+        driveFolder.mimeType = "application/vnd.google-apps.folder";
+        await driveApi.files.create(driveFolder);
+        appFolderID = await getFileId("BP Logger");
+      },
+    );
+
+    // 3. Get the log file's ID
+    logFileID = await getFileId("log").catchError(
+      (e) async {
+        print("log.csv file not found. Creating log.csv in BP Logger...");
+        var driveFile = new File(); // Create new file
+        driveFile.name = "log.csv"; // called log.csv
+        driveFile.mimeType =
+            "application/vnd.google-apps.file"; // mimeType of file
+        driveFile.parents = [appFolderID];
+
+        final text = "Date, Time, Diastolic, Systolic";
+        Stream<List<int>> mediaStream =
+            Future.value(List.from(ascii.encode(text)).cast<int>().toList())
+                .asStream()
+                .asBroadcastStream();
+        var media = new Media(mediaStream, text.length);
+        await driveApi.files
+            .create(driveFile, uploadMedia: media); // and upload it to Drive
+
+        logFileID = await getFileId("log");
+      },
+    );
+
+    // 4. Get the version of the app for displaying in the about dialog
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      version = packageInfo.version;
+    });
 
     print("Log file ID = $logFileID");
     print("App folder ID = $appFolderID");
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      version = packageInfo.version;
-      print("App version = $version");
-    });
+    print("App version = $version");
   }
 
   Future<String> getFileId(String fileName) async {

@@ -1,7 +1,6 @@
 import "package:flutter/material.dart"; // UI
 // For rejecting everything but digits in the TextField
-import "package:flutter/services.dart"
-    show FilteringTextInputFormatter;
+import "package:flutter/services.dart" show FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat; // To get date and time
 import "DriveHelper.dart"; // Backend stuff
 import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
@@ -11,14 +10,8 @@ import 'FileAppendDialog.dart';
 import 'LogOutDialog.dart'; // For logging out
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    Key key,
-    @required this.driveHelper,
-    @required this.onSignOut,
-  }) : super(key: key);
-
+  const HomePage({Key key, @required this.driveHelper}) : super(key: key);
   final DriveHelper driveHelper;
-  final Future<void> Function() onSignOut;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -90,12 +83,16 @@ class _HomePageState extends State<HomePage> {
                       // Name of user
                       FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(driveHelper.getDisplayName(),
-                            style: Theme.of(context).textTheme.headline4),
+                        child: Text(
+                          driveHelper.getDisplayName(),
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
                       ),
                       // Email ID of user
-                      Text(driveHelper.getEmail(),
-                          style: Theme.of(context).textTheme.headline6)
+                      Text(
+                        driveHelper.getEmail(),
+                        style: Theme.of(context).textTheme.headline6,
+                      )
                     ],
                   ),
                 ),
@@ -108,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return LogOutDialog(logOut: widget.onSignOut);
+                      return LogOutDialog(logOut: driveHelper.signOut);
                     },
                   );
                 },
@@ -249,42 +246,40 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: Builder(
-        builder: (context) => FloatingActionButton.extended(
-          icon: Icon(Icons.storage),
-          label: Text("ADD TO FILE"),
-          onPressed: () async {
-            // Get values from TextFieldControllers
-            String diastolic = textFieldController1.text;
-            String systolic = textFieldController2.text;
+      floatingActionButton: FloatingActionButton.extended(
+        icon: Icon(Icons.storage),
+        label: Text("ADD TO FILE"),
+        onPressed: () async {
+          // Get values from TextFieldControllers
+          String diastolic = textFieldController1.text;
+          String systolic = textFieldController2.text;
 
-            // Don"t run if values are not filled in
-            if (diastolic != "" && systolic != "") {
-              // Dismiss keyboard once button is pressed
-              FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }
-
-              String text =
-                  "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic"; // Text that has to be appended
-
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return FileAppendDialog(
-                    text: text,
-                    driveHelper: driveHelper,
-                  );
-                },
-                barrierDismissible: false,
-              );
-
-              textFieldController1.clear();
-              textFieldController2.clear();
+          // Don"t run if values are not filled in
+          if (diastolic != "" && systolic != "") {
+            // Dismiss keyboard once button is pressed
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
             }
-          },
-        ),
+
+            String text =
+                "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic"; // Text that has to be appended
+
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return FileAppendDialog(
+                  text: text,
+                  driveHelper: driveHelper,
+                );
+              },
+              barrierDismissible: false,
+            );
+
+            textFieldController1.clear();
+            textFieldController2.clear();
+          }
+        },
       ),
     );
   }

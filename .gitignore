@@ -40,6 +40,5 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
-ios/build/
+/ios/build/
 .firebase/
-pubspec.lock

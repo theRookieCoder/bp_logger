@@ -1,156 +1,17 @@
 import 'HomePage.dart';
 import 'DriveHelper.dart';
 import 'package:flutter/material.dart'; // UI
-import 'package:google_sign_in/google_sign_in.dart'
-    show GoogleSignInAccount, GoogleSignIn;
-import 'package:googleapis/drive/v3.dart' show DriveApi;
-import 'package:flutter/foundation.dart' show kIsWeb; // For checking if web
-import 'package:google_fonts/google_fonts.dart'; // For monospaced font
+import 'package:google_fonts/google_fonts.dart'
+    show GoogleFonts; // For monospaced font
 
-// Sign in with Google and then start the app
 Future<void> main() async {
-  if (!kIsWeb) {
-    WidgetsFlutterBinding
-        .ensureInitialized(); // Web sign in does not require Flutter engine
-  }
-  bool success = false;
-  GoogleSignInAccount account;
-  GoogleSignIn googleDriveSignIn;
-  String error;
-
-  for (int i = 0; i < 2 && success == false; i++) {
-    print(i);
-    googleDriveSignIn = GoogleSignIn.standard(scopes: [
-      DriveApi.driveFileScope,
-    ]); // Sign in to Google with Google Drive access
-    account = await DriveHelper.signInWithGoogle(googleDriveSignIn)
-        .catchError((e) async {
-      print("Sign in failed");
-      print("Error dump:\n$e");
-      account = null;
-      error = e.toString();
-    });
-
-    if (account == null) {
-      success = false;
-    } else if (error == null) {
-      error = "User dismissed";
-    } else {
-      success = true;
-    }
-  }
-
   runApp(
-    MyApp(
-      account: account,
-      googleSignIn: googleDriveSignIn,
-      failed: !success,
-      error: error,
-    ),
+    MyApp(),
   );
 }
 
-// Returns the HomePage if the sign in succeeded and an error page if the sign in failed
-Widget screen(
-  bool failed,
-  GoogleSignInAccount account,
-  GoogleSignIn googleSignIn,
-  dynamic error,
-) {
-  if (failed) {
-    return FailedPage(error: error.toString());
-  } else {
-    DriveHelper driveHelper = DriveHelper(account);
-
-    return FutureBuilder(
-      future: driveHelper.init(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            !snapshot.hasError) {
-          return HomePage(
-            driveHelper: driveHelper,
-            onSignOut: () async {
-              await googleSignIn
-                  .disconnect(); // Disconnect the user (signing out does not allow you to select a user)
-            },
-          );
-        } else if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "BP Logger has encountered an unknown error. Please restart the app",
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          );
-        } else {
-          return Scaffold(
-            backgroundColor: Colors.grey[850],
-            body: Center(
-              child: SizedBox(
-                width: 200,
-                height: 200,
-                child: CircularProgressIndicator(strokeWidth: 10),
-              ),
-            ),
-          );
-        }
-      },
-    );
-  }
-}
-
-// The page that shows up if the sign in failed
-class FailedPage extends StatelessWidget {
-  const FailedPage({
-    Key key,
-    @required this.error,
-  }) : super(key: key);
-  final String error;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("BP Logger"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "BP Logger tried to sign in and failed for more than 2 times",
-                style: Theme.of(context).textTheme.headline5,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "Error: $error",
-                style: GoogleFonts.robotoMono(),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
-  const MyApp({
-    Key key,
-    @required this.account,
-    @required this.googleSignIn,
-    @required this.failed,
-    @required this.error,
-  }) : super(key: key);
-  final GoogleSignInAccount account;
-  final GoogleSignIn googleSignIn;
-  final bool failed;
-  final String error;
+  final driveHelper = DriveHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -167,11 +28,51 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
-      home: screen(
-        failed,
-        account,
-        googleSignIn,
-        error,
+      home: FutureBuilder(
+        future: driveHelper.signInAndInit(),
+        builder: (context, snapshot) {
+          // If future resolved without any errors, show the homepage
+          if (snapshot.connectionState == ConnectionState.done &&
+              !snapshot.hasError) {
+            return HomePage(driveHelper: driveHelper);
+          }
+
+          // If future resolved with an error, show a page with the error
+          else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasError) {
+            return Scaffold(
+              backgroundColor: Colors.grey[850],
+              body: Center(
+                child: Column(
+                  children: [
+                    Text(
+                      "BP Logger has encountered an error",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    Text(
+                      "Error: ${snapshot.error}",
+                      style: GoogleFonts.robotoMono(),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // If future did not resolve yet, show progress indicator
+          else {
+            return Scaffold(
+              backgroundColor: Colors.grey[850],
+              body: Center(
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: CircularProgressIndicator(strokeWidth: 10),
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }

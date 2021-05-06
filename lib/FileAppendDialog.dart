@@ -48,6 +48,7 @@ class _FileAppendDialogState extends State<FileAppendDialog>
           widget.text,
         ),
         builder: (context, snapshot) {
+          // If future completed and has no errors
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
             title = "Success";
@@ -80,7 +81,10 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                 ),
               ],
             );
-          } else if (snapshot.connectionState == ConnectionState.done &&
+          }
+
+          // If future completed and has errors
+          else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
             title = "Write failed";
 
@@ -114,7 +118,10 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                 ),
               ],
             );
-          } else {
+          }
+
+          // If future did not complete yet
+          else {
             title = "Writing to file";
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,

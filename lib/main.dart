@@ -31,16 +31,22 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder(
         future: driveHelper.signInAndInit(),
         builder: (context, snapshot) {
+          Widget child;
+
           // If future resolved without any errors, show the homepage
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
-            return HomePage(driveHelper: driveHelper);
+            child = HomePage(
+              key: ValueKey(0),
+              driveHelper: driveHelper,
+            );
           }
 
           // If future resolved with an error, show a page with the error
           else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
-            return Scaffold(
+            child = Scaffold(
+              key: ValueKey(1),
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: Column(
@@ -61,7 +67,8 @@ class MyApp extends StatelessWidget {
 
           // If future did not resolve yet, show progress indicator
           else {
-            return Scaffold(
+            child = Scaffold(
+              key: ValueKey(2),
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(
@@ -72,6 +79,11 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
+
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 400),
+            child: child,
+          );
         },
       ),
     );

@@ -10,18 +10,19 @@ After that, BP Logger can add the date, time, diastolic, and systolic values to 
 
 If you want to install the app by building from source:
 
-- Install Dart and Flutter SDK on your computer, they're pretty big
+- Install Dart and Flutter SDK on your computer, they're pretty large in size
 - Download the source files using `gh repo clone theRookieCoder/bp_logger`
 - `cd` into the source folder
 - Connect your Android or iPhone using a usb cable (or wirelessly if you know how to do that)
 - Check that Flutter can see your phone by running `flutter devices`
 - Run `flutter run --release`
+- If you run into issues, try running `flutter doctor` and seeing if that helps
 
 ## Installing
 
-Currently, BP Logger is not available in any app stores and hence has to sideloaded.  
+Currently, BP Logger is not available in any app stores and hence has to sideloaded.
 
-You can add the [website](https://bp-logger-rookie-coder.web.app) to your homescreen but this takes forever to load and does not perform very well (not that that matters much anyway)
+Alternatively, you can add the [website](https://bp-logger-rookie-coder.web.app) to your homescreen but this takes forever to load and does not perform very well (not that that matters much anyway)
 
 ### Android
 
@@ -31,7 +32,7 @@ You can sideload the Android version of BP Logger fairly easily.
 
 - It should open up to the latest version
 
-- Under assets, find a file called `bp_logger_x.x.x.apk` make sure the file ends in `apk`
+- Under assets, find a file called `bp_logger_x.x.x.apk` _make sure the file ends in `apk`_
 
 - Simply click on it to download it
 
@@ -49,7 +50,7 @@ You can sideload the Android version of BP Logger fairly easily.
 
 ### iOS
 
-Sideloading on iOS is not easy, and neither is it easy for me to publish my app in the App Store.  
+Sideloading on iOS is not easy, and neither is it easy for me to publish my app in the App Store.
 
 There are 2 ways of sideloading. The easiest is using AltStore
 
@@ -61,6 +62,3 @@ There are 2 ways of sideloading. The easiest is using AltStore
 - It should install and as long as your iPhone is connected to your computer once a week, it should renew
 
 You can also the variety of other method, such as [this](installonair.com) website, or building from source
-
-
-

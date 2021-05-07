@@ -10,9 +10,9 @@
 - Future resolved without errors
   - Display the `HomePage` and pass `driveHelper` to it
 - Future resolved with errors
-  - Display a `Scaffold` with a `grey[850]` background to match the `HomePage`, and a `Column` of 2 `Text`s. In the second `Text`, I display the error returned, with a monospaced font
+  - Display a `Scaffold` with a `Column` of 2 `Text`s. In the second `Text`, I display the error returned, with a monospaced font
 - Future not resolved
-  - I display a `Scaffold` with a `grey[850]` background, and a `CircularProgressIndicator` enclosed in a `SizedBox` of size 200<sup>2</sup>
+  - I display a `Scaffold` with a `CircularProgressIndicator` enclosed in a `SizedBox` of size 200<sup>2</sup>
 - The future provided is `DriveHelper.signInAndInit`. It does the following:
   - Creates a `GoogleSignIn` with the `DriveApi.driveFileScope`
   - Updates `account` with the an awaited `GoogleSignInAccount` from `signInWithGoogle`
@@ -24,10 +24,6 @@
     - On failing that, it creates a new Google Sheets file called `log` in the aforementioned app folder
     - It fills the file with the headers for the file's values
   - Gets the version number specfied in `pubspec.yaml` by using `PackageInfo`
-  - Prints the following:
-    - App folder ID
-    - Log file ID
-    - App version number
 
 ## The HomePage
 
@@ -47,7 +43,7 @@ The `ListView`'s children are as follows:
   - The `Column`'s children consist of the following:
     - A `GoogleCircleUserAvatar` from `DriveHelper` with a height and width equal to the drawer width divided by 2.5 and padding of `10px`
     - The Google account's display name, enclosed in a `FittedBox` to allow the `Text` to scale down if needed and `headline4` text style
-    - The Google account's email address, with `headline6` text style
+    - The Google account's email address, also enclosed in a `FittedBox`, with `headline6` text style
 - The main buttons
   - These buttons are `ListTile`s with `Text` and a relevant `Icon`
   - There are 4 buttons as follows:

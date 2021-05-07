@@ -47,12 +47,11 @@ class MyApp extends StatelessWidget {
               snapshot.hasError) {
             child = Scaffold(
               key: ValueKey(1),
-              backgroundColor: Colors.grey[850],
               body: Center(
                 child: Column(
                   children: [
                     Text(
-                      "BP Logger has encountered an error",
+                      "BP Logger encountered an error",
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                     Text(

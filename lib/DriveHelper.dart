@@ -101,13 +101,8 @@ class DriveHelper {
     );
 
     // 4. Get the version of the app for displaying in the about dialog
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      version = packageInfo.version;
-    });
-
-    print("Log file ID = $logFileID");
-    print("App folder ID = $appFolderID");
-    print("App version = $version");
+    final packageInfo = await PackageInfo.fromPlatform();
+    version = packageInfo.version;
   }
 
   Future<String> getFileId(String fileName) async {

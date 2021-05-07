@@ -1,13 +1,12 @@
 import "package:flutter/material.dart"; // UI
-// For rejecting everything but digits in the TextField
 import "package:flutter/services.dart" show FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat; // To get date and time
-import "DriveHelper.dart"; // Backend stuff
 import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
 import "package:url_launcher/url_launcher.dart"
     show launch; // For opening links
 import 'FileAppendDialog.dart';
 import 'LogOutDialog.dart'; // For logging out
+import "DriveHelper.dart"; // Backend stuff
 
 class HomePage extends StatefulWidget {
   const HomePage({Key key, @required this.driveHelper}) : super(key: key);
@@ -89,9 +88,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       // Email ID of user
-                      Text(
-                        driveHelper.getEmail(),
-                        style: Theme.of(context).textTheme.headline6,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          driveHelper.getEmail(),
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
                       )
                     ],
                   ),

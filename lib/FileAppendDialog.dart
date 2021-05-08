@@ -1,12 +1,12 @@
 import 'package:bp_logger/DriveHelper.dart';
 import 'package:flutter/material.dart';
-import 'package:animated_check/animated_check.dart';
+import 'animated_check.dart';
 
 class FileAppendDialog extends StatefulWidget {
   const FileAppendDialog({
-    Key key,
-    @required this.text,
-    @required this.driveHelper,
+    Key? key,
+    required this.text,
+    required this.driveHelper,
   }) : super(key: key);
 
   final String text;
@@ -18,8 +18,8 @@ class FileAppendDialog extends StatefulWidget {
 
 class _FileAppendDialogState extends State<FileAppendDialog>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> _animation;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   String title = "";
 
   @override

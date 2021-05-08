@@ -9,7 +9,7 @@ import 'LogOutDialog.dart'; // For logging out
 import "DriveHelper.dart"; // Backend stuff
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key, @required this.driveHelper}) : super(key: key);
+  const HomePage({Key? key, required this.driveHelper}) : super(key: key);
   final DriveHelper driveHelper;
 
   @override
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   static DateTime date = new DateTime.now();
   var textFieldController1 = TextEditingController(); // Diastolic
   var textFieldController2 = TextEditingController(); // Systolic
-  DriveHelper driveHelper; // "Backend" interface
+  DriveHelper? driveHelper; // "Backend" interface
 
   // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
   double _getDrawerWidth(context) {
@@ -41,11 +41,11 @@ class _HomePageState extends State<HomePage> {
 
   // Datepicker for selecting the date
   _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime(2015),
-      lastDate: DateTime(3000),
+      firstDate: DateTime.now().subtract(Duration(days: 7)),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != date) {
       // Only update if user picked and isn"t the same as before
@@ -76,14 +76,14 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                           height: _getDrawerWidth(context) / 2.5,
                           width: _getDrawerWidth(context) / 2.5,
-                          child: driveHelper.getAvatar(),
+                          child: driveHelper!.getAvatar(),
                         ),
                       ),
                       // Name of user
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          driveHelper.getDisplayName(),
+                          driveHelper!.getDisplayName(),
                           style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          driveHelper.getEmail(),
+                          driveHelper!.getEmail(),
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       )
@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
-                      return LogOutDialog(logOut: driveHelper.signOut);
+                      return LogOutDialog(logOut: driveHelper!.signOut);
                     },
                   );
                 },
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.insert_drive_file_outlined),
                 title: Text("Access file"),
-                onTap: driveHelper.showLogFile,
+                onTap: driveHelper!.showLogFile,
               ),
               // For opening the support page
               ListTile(
@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext context) {
                       return AboutDialog(
                         applicationName: "BP Logger",
-                        applicationVersion: "Version ${driveHelper.version}",
+                        applicationVersion: "Version ${driveHelper!.version}",
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(left: 20),
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                                     text: "in Github",
                                     style: Theme.of(context)
                                         .textTheme
-                                        .caption
+                                        .caption!
                                         .apply(
                                           color: Colors.blue,
                                         ),
@@ -272,7 +272,7 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context) {
                 return FileAppendDialog(
                   text: text,
-                  driveHelper: driveHelper,
+                  driveHelper: driveHelper!,
                 );
               },
               barrierDismissible: false,

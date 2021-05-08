@@ -12,30 +12,30 @@ import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 import 'package:url_launcher/url_launcher.dart' show launch;
 
 class DriveHelper {
-  String logFileID; // FileID of log file
-  String appFolderID; // FileID of the folder the log file is in
-  DriveApi driveApi; // Google Drive API
-  GoogleSignInAccount account; // Google user account
-  String version; // Version of app for about
-  GoogleSignIn signInScopes; // For signing out
+  late String logFileID; // FileID of log file
+  late String appFolderID; // FileID of the folder the log file is in
+  late DriveApi driveApi; // Google Drive API
+  late GoogleSignInAccount account; // Google user account
+  late String version; // Version of app for about
+  late GoogleSignIn signInScopes; // For signing out
 
   DriveHelper();
 
   GoogleUserCircleAvatar getAvatar() =>
       GoogleUserCircleAvatar(identity: account);
 
-  String getDisplayName() => account.displayName;
+  String getDisplayName() => account.displayName!;
 
   String getEmail() => account.email;
 
   void showLogFile() =>
       launch("https://docs.google.com/spreadsheets/d/$logFileID/");
 
-  Future<GoogleSignInAccount> signInWithGoogle(
+  Future<GoogleSignInAccount?> signInWithGoogle(
     GoogleSignIn googleDriveSignIn,
   ) async {
     // Silent sign in doesn't require user input
-    GoogleSignInAccount account = await googleDriveSignIn.signInSilently();
+    GoogleSignInAccount? account = await googleDriveSignIn.signInSilently();
     if (account == null) {
       print("Silent sign in failed");
       account = await googleDriveSignIn.signIn();
@@ -58,7 +58,14 @@ class DriveHelper {
     signInScopes = GoogleSignIn.standard(
       scopes: [DriveApi.driveFileScope],
     );
-    account = await signInWithGoogle(signInScopes).catchError((e) => throw e);
+    GoogleSignInAccount? testAccount =
+        await signInWithGoogle(signInScopes).catchError((e) => throw e);
+
+    if (testAccount == null) {
+      throw "Google user account null";
+    } else {
+      account = testAccount;
+    }
 
     // Then initialise all the variables
 
@@ -112,19 +119,18 @@ class DriveHelper {
         spaces:
             'drive'); // Use name to search and make sure it isn't in the bin
 
-    if (search.files.length == 0) {
-      return null;
+    if (search.files!.length == 0) {
+      throw "File not found";
     }
-    return search.files[0].id;
+    return search.files![0].id!;
   }
 
-  Future<String> exportFileData(String fileID) async {
-    Media fileMedia = await driveApi.files
+  Future<String?> exportFileData(String fileID) async {
+    Media? fileMedia = await driveApi.files
         .export(fileID, "text/csv", downloadOptions: DownloadOptions.fullMedia);
 
-    String fileData;
-
-    await fileMedia.stream.listen((event) {
+    String? fileData;
+    await fileMedia!.stream.listen((event) {
       fileData = String.fromCharCodes(event);
     }).asFuture();
     return fileData;
@@ -146,11 +152,7 @@ class DriveHelper {
     );
     await driveApi.files
         .update(new File(), logFileID, uploadMedia: media)
-        .onError((error, stackTrace) {
-      print("Error: $error was caught by DriveHelper");
-      print("This was the stack trace when the exception was caught: ");
-      print(stackTrace);
-      return null;
-    }); // Update the existing file with the new data
+        .onError((error, stackTrace) =>
+            throw "File update failed with $error"); // Update the existing file with the new data
   }
 }

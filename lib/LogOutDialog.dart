@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart'; // UI
 
 class LogOutDialog extends StatefulWidget {
-  const LogOutDialog({
-    Key key,
-    @required this.logOut,
-  }) : super(key: key);
+  const LogOutDialog({Key? key, required this.logOut}) : super(key: key);
   final Future<void> Function() logOut;
 
   @override
@@ -18,7 +15,8 @@ class _LogOutDialogState extends State<LogOutDialog> {
       title: Text(
         "Logout instructions",
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.headline4.apply(fontSizeFactor: 0.9),
+        style:
+            Theme.of(context).textTheme.headline4!.apply(fontSizeFactor: 0.9),
       ),
       content: Text(
         "To logout, follow the steps below\n  1. Click the logout button below\n  2. Close the website/app in the task switcher\n  3. Open the app again and sign in",

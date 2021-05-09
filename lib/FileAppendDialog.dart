@@ -1,6 +1,6 @@
 import 'package:bp_logger/DriveHelper.dart';
 import 'package:flutter/material.dart';
-import 'animated_check.dart';
+import 'package:animated_check/animated_check.dart';
 
 class FileAppendDialog extends StatefulWidget {
   const FileAppendDialog({

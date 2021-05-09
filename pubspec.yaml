@@ -1,13 +1,13 @@
 name: bp_logger
 description: Logs BP values in Google Drive as a Sheets file
-
+repository: https://www.github.com/theRookieCoder/bp_logger
 publish_to: "none"
 
 # The following defines the version and build number for your application.
-version: 1.2.0
+version: 1.2.1
 
 environment:
-  sdk: ">=2.12.3"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,10 +18,9 @@ dependencies:
   url_launcher: ^6.0.3 # For opening the log file
   package_info_plus: ^1.0.1 # For getting version for web
   google_fonts: ^2.0.0 # For monospaced font
+  animated_check: ^1.0.2 # For animated checkmark
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   # flutter_launcher_icons: "^0.8.0"
 
 flutter_icons:

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.1]
+
+- Fixed keyboard immediately closing
+
 ## [1.3.0]
 
 - Removed `googleapis` and `google_sign_in`

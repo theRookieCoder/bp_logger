@@ -1,4 +1,4 @@
-import 'package:bp_logger/DriveHelper.dart';
+import 'package:drive_helper/drive_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_check/animated_check.dart';
 
@@ -7,10 +7,11 @@ class FileAppendDialog extends StatefulWidget {
     Key? key,
     required this.text,
     required this.driveHelper,
+    required this.logFileID,
   }) : super(key: key);
-
   final String text;
   final DriveHelper driveHelper;
+  final String logFileID;
 
   @override
   _FileAppendDialogState createState() => _FileAppendDialogState();
@@ -43,9 +44,10 @@ class _FileAppendDialogState extends State<FileAppendDialog>
   Widget build(BuildContext context) {
     return AlertDialog(
       content: FutureBuilder(
-        future: widget.driveHelper.appendToFile(
-          widget.driveHelper.logFileID,
+        future: widget.driveHelper.appendFile(
+          widget.logFileID,
           widget.text,
+          mime: DriveHelper.mime.export.csv,
         ),
         builder: (context, snapshot) {
           // If future completed and has no errors

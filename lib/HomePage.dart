@@ -1,16 +1,22 @@
-import "package:flutter/material.dart"; // UI
+import "package:flutter/material.dart";
 import "package:flutter/services.dart" show FilteringTextInputFormatter;
-import "package:intl/intl.dart" show DateFormat; // To get date and time
-import "package:flutter/gestures.dart" show TapGestureRecognizer; // For links
-import "package:url_launcher/url_launcher.dart"
-    show launch; // For opening links
+import "package:intl/intl.dart" show DateFormat;
+import "package:flutter/gestures.dart" show TapGestureRecognizer;
+import "package:url_launcher/url_launcher.dart" show launch;
+import 'package:drive_helper/drive_helper.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'FileAppendDialog.dart';
-import 'LogOutDialog.dart'; // For logging out
-import "DriveHelper.dart"; // Backend stuff
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.driveHelper}) : super(key: key);
+  const HomePage({
+    Key? key,
+    required this.driveHelper,
+    required this.logFileID,
+    required this.version,
+  }) : super(key: key);
   final DriveHelper driveHelper;
+  final String logFileID;
+  final String version;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -20,7 +26,14 @@ class _HomePageState extends State<HomePage> {
   static DateTime date = new DateTime.now();
   var textFieldController1 = TextEditingController(); // Diastolic
   var textFieldController2 = TextEditingController(); // Systolic
-  DriveHelper? driveHelper; // "Backend" interface
+  late DriveHelper driveHelper; // "Backend" interface
+
+  // Runs when the program starts
+  @override
+  void initState() {
+    super.initState();
+    driveHelper = widget.driveHelper;
+  }
 
   // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
   double _getDrawerWidth(context) {
@@ -30,13 +43,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       return width;
     }
-  }
-
-  // Runs when the program starts
-  @override
-  void initState() {
-    super.initState();
-    driveHelper = widget.driveHelper;
   }
 
   // Datepicker for selecting the date
@@ -76,14 +82,14 @@ class _HomePageState extends State<HomePage> {
                         child: Container(
                           height: _getDrawerWidth(context) / 2.5,
                           width: _getDrawerWidth(context) / 2.5,
-                          child: driveHelper!.getAvatar(),
+                          child: driveHelper.avatar,
                         ),
                       ),
                       // Name of user
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          driveHelper!.getDisplayName(),
+                          driveHelper.name ?? "",
                           style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
@@ -91,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text(
-                          driveHelper!.getEmail(),
+                          driveHelper.email,
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       )
@@ -103,20 +109,18 @@ class _HomePageState extends State<HomePage> {
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text("Log out"),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return LogOutDialog(logOut: driveHelper!.signOut);
-                    },
-                  );
+                onTap: () async {
+                  await driveHelper.signOut();
+                  Phoenix.rebirth(context);
                 },
               ),
               // For showing the log file
               ListTile(
                 leading: Icon(Icons.insert_drive_file_outlined),
                 title: Text("Access file"),
-                onTap: driveHelper!.showLogFile,
+                onTap: () async => launch(
+                  "https://docs.google.com/spreadsheets/d/${widget.logFileID}/",
+                ),
               ),
               // For opening the support page
               ListTile(
@@ -135,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (BuildContext context) {
                       return AboutDialog(
                         applicationName: "BP Logger",
-                        applicationVersion: "Version ${driveHelper!.version}",
+                        applicationVersion: "Version ${widget.version}",
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(left: 20),
@@ -272,7 +276,8 @@ class _HomePageState extends State<HomePage> {
               builder: (BuildContext context) {
                 return FileAppendDialog(
                   text: text,
-                  driveHelper: driveHelper!,
+                  driveHelper: driveHelper,
+                  logFileID: widget.logFileID,
                 );
               },
               barrierDismissible: false,

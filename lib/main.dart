@@ -1,17 +1,58 @@
+import 'package:drive_helper/drive_helper.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'HomePage.dart';
-import 'DriveHelper.dart';
-import 'package:flutter/material.dart'; // UI
-import 'package:google_fonts/google_fonts.dart'
-    show GoogleFonts; // For monospaced font
 
-Future<void> main() async {
-  runApp(
-    MyApp(),
-  );
+void main() => runApp(Phoenix(child: MyApp()));
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
   final driveHelper = DriveHelper();
+  late String logFileID;
+  late String version;
+
+  Future<void> initialise() async {
+    late String appFolderID;
+
+    await driveHelper.signInAndInit([DriveHelper.scopes.app]);
+
+    await driveHelper.getFileID("BP Logger").then(
+      (files) {
+        appFolderID = files[0];
+      },
+    ).catchError(
+      (error) async {
+        print(error);
+        appFolderID = await driveHelper.createFile(
+          "BP Logger",
+          DriveHelper.mime.files.folder,
+        );
+      },
+    );
+    await driveHelper.getFileID("log").then(
+      (files) {
+        logFileID = files[0];
+      },
+    ).catchError(
+      (error) async {
+        print(error);
+        logFileID = await driveHelper.createFile(
+          "log.csv",
+          DriveHelper.mime.files.file,
+          text: "Date, Time, Diastolic, Systolic",
+          parents: [appFolderID],
+        );
+      },
+    );
+
+    await PackageInfo.fromPlatform().then((info) => version = info.version);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +70,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       home: FutureBuilder(
-        future: driveHelper.signInAndInit(),
+        future: initialise(),
         builder: (context, snapshot) {
           Widget child;
 
@@ -37,8 +78,10 @@ class MyApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
             child = HomePage(
-              key: ValueKey(0),
+              key: UniqueKey(),
               driveHelper: driveHelper,
+              logFileID: logFileID,
+              version: version,
             );
           }
 
@@ -46,20 +89,20 @@ class MyApp extends StatelessWidget {
           else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
             child = Scaffold(
-              key: ValueKey(1),
-              body: Center(
-                child: Column(
-                  children: [
-                    Text(
-                      "BP Logger encountered an error",
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    Text(
-                      "Error: ${snapshot.error}",
-                      style: GoogleFonts.robotoMono(),
-                    ),
-                  ],
-                ),
+              key: UniqueKey(),
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "BP Logger encountered an error",
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  Text(
+                    "Error: ${snapshot.error}",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.robotoMono().apply(),
+                  ),
+                ],
               ),
             );
           }
@@ -67,12 +110,12 @@ class MyApp extends StatelessWidget {
           // If future did not resolve yet, show progress indicator
           else {
             child = Scaffold(
-              key: ValueKey(2),
+              key: UniqueKey(),
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(
-                  width: 200,
-                  height: 200,
+                  width: MediaQuery.of(context).size.width / 1.5,
+                  height: MediaQuery.of(context).size.width / 1.5,
                   child: CircularProgressIndicator(strokeWidth: 10),
                 ),
               ),

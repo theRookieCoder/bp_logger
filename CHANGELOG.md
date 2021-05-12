@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0]
+
+- Removed `googleapis` and `google_sign_in`
+- Added `drive_helper` and `flutter_phoenix`
+- Removed local DriveHelper.dart (and GoogleAuthClient.dart) and replaced it with the drive_helper package, which was rewritten from the ground up
+- Tweaked FileAppendDialog.dart to use drive_helper
+- Updated HomePage.dart to use drive_helper
+- Removed LogOutDialog.dart because logging out does not disconnect anymore and automatically uses flutter_phoenix to restart the app
+- Made `MyApp` stateful to allow flutter_phoenix to work properly
+- Added initialise function to handle all the missing things that drive_helper does not do anymore (get file id's, make new files if missing, get version)
+
 ## [1.2.1]
 
 - All changes are now listed in CHANGELOG.md rather than in commit messages

@@ -78,7 +78,6 @@ class _MyAppState extends State<MyApp> {
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
             child = HomePage(
-              key: UniqueKey(),
               driveHelper: driveHelper,
               logFileID: logFileID,
               version: version,
@@ -89,7 +88,6 @@ class _MyAppState extends State<MyApp> {
           else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
             child = Scaffold(
-              key: UniqueKey(),
               body: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -110,7 +108,6 @@ class _MyAppState extends State<MyApp> {
           // If future did not resolve yet, show progress indicator
           else {
             child = Scaffold(
-              key: UniqueKey(),
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(

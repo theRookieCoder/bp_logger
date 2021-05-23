@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.2]
+
+- Added makefile with building related functionality
+- Removed landscape orientations
+- Upgraded to Flutter 2.2 and Dart 2.13
+- Updated Gradle Java path in `gradle.properties`
+- Raised `minSdkVersion` in `build.gradle`
+- Updated permissions in `AndroidManifest.xml`
+- Refactored some code
+- Made the open log file force webview
+- Used a `Form` for the `TextField` and added validators
+- Removed `maxLength` in `TextField`s
+- Updated FAB to work with validators
+
 ## [1.3.1]
 
 - Fixed keyboard immediately closing

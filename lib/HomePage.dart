@@ -23,10 +23,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static DateTime date = new DateTime.now();
-  var textFieldController1 = TextEditingController(); // Diastolic
-  var textFieldController2 = TextEditingController(); // Systolic
+  DateTime date = new DateTime.now();
+  TextEditingController diastolicTEC = TextEditingController(); // Diastolic
+  TextEditingController systolicTEC = TextEditingController(); // Systolic
   late DriveHelper driveHelper; // "Backend" interface
+  final formKey = GlobalKey<FormState>();
 
   // Runs when the program starts
   @override
@@ -159,11 +160,12 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.blue,
                                         ),
                                     recognizer: TapGestureRecognizer()
-                                      ..onTap = () async {
-                                        launch(
+                                      ..onTap = () async => launch(
                                           "https://www.github.com/theRookieCoder/bp_logger",
-                                        );
-                                      },
+                                          forceWebView: true,
+                                          enableJavaScript: true,
+                                          statusBarBrightness:
+                                              Theme.of(context).brightness),
                                   ),
                                   TextSpan(
                                     text: " under the AGPL 3.0 License",
@@ -184,84 +186,115 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Invisible container to center the text
-                Container(width: 50),
-                // For displaying the date
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    DateFormat("d/M/y").format(date),
-                    style: Theme.of(context).textTheme.headline3,
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Invisible container to center the text
+                  Container(width: 50),
+                  // For displaying the date
+                  Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      DateFormat("d/M/y").format(date),
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
                   ),
-                ),
-                // For changing the date
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  iconSize: 30.0,
-                  tooltip: "Edit date",
-                  onPressed: () async {
-                    await _selectDate(context);
+                  // For changing the date
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: 30.0,
+                    tooltip: "Edit date",
+                    onPressed: () async {
+                      await _selectDate(context);
+                    },
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                child: TextFormField(
+                  validator: (value) {
+                    late int val;
+                    if (value != "" && value != null) {
+                      val = int.parse(value);
+                    } else {
+                      return "Enter a value";
+                    }
+                    if (val > 120) {
+                      return "Too high";
+                    } else if (val < 60) {
+                      return "Too low";
+                    } else {
+                      return null;
+                    }
                   },
+                  controller: diastolicTEC,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                  ),
+                  decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderSide: new BorderSide(),
+                    ),
+                    labelText: "Diastolic",
+                  ),
+                  // Only digits, everything else gets rejected even if typed in
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.number, // Number only keyboard
                 ),
-              ],
-            ),
-            // For entering the diastolic value
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-              child: TextField(
-                maxLength: 3,
-                controller: textFieldController1,
-                style: TextStyle(
-                  fontSize: 25.0,
-                ),
-                decoration: InputDecoration(
-                  counterText: "",
-                  border: new OutlineInputBorder(borderSide: new BorderSide()),
-                  labelText: "Diastolic",
-                ),
-                // Only digits, everything else gets rejected even if typed in
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number, // Number only keyboard
               ),
-            ),
-            // For entering the systolic value
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-              child: TextField(
-                maxLength: 3,
-                controller: textFieldController2,
-                style: TextStyle(
-                  fontSize: 25.0,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                child: TextFormField(
+                  validator: (value) {
+                    late int val;
+                    if (value != "" && value != null) {
+                      val = int.parse(value);
+                    } else {
+                      return "Enter a value";
+                    }
+                    if (val > 200) {
+                      return "Too high";
+                    } else if (val < 100) {
+                      return "Too low";
+                    } else {
+                      return null;
+                    }
+                  },
+                  controller: systolicTEC,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                  ),
+                  decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                      borderSide: new BorderSide(),
+                    ),
+                    labelText: "Systolic",
+                  ),
+                  // Only digits everything else is rejected even of typed in
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  keyboardType: TextInputType.number, // Number only keyboard
                 ),
-                decoration: InputDecoration(
-                  counterText: "",
-                  border: new OutlineInputBorder(borderSide: new BorderSide()),
-                  labelText: "Systolic",
-                ),
-                // Only digits everything else is rejected even of typed in
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number, // Number only keyboard
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: Icon(Icons.storage),
         label: Text("ADD TO FILE"),
         onPressed: () async {
-          // Get values from TextFieldControllers
-          String diastolic = textFieldController1.text;
-          String systolic = textFieldController2.text;
-
-          // Don"t run if values are not filled in
-          if (diastolic != "" && systolic != "") {
+          // Don"t run if values are not correct
+          if (formKey.currentState != null &&
+              formKey.currentState!.validate()) {
+            // Get values from TextFieldControllers
+            String diastolic = diastolicTEC.text;
+            String systolic = systolicTEC.text;
             // Dismiss keyboard once button is pressed
             FocusScopeNode currentFocus = FocusScope.of(context);
             if (!currentFocus.hasPrimaryFocus) {
@@ -283,8 +316,8 @@ class _HomePageState extends State<HomePage> {
               barrierDismissible: false,
             );
 
-            textFieldController1.clear();
-            textFieldController2.clear();
+            diastolicTEC.clear();
+            systolicTEC.clear();
           }
         },
       ),

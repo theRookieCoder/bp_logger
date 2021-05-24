@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.3]
+
+- Changed support page
+- Extracted the error page in app startup and added a timer to relaunch the app after 10 seconds
+
 ## [1.3.2]
 
 - Added makefile with building related functionality

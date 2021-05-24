@@ -5,6 +5,7 @@ import "package:flutter/gestures.dart" show TapGestureRecognizer;
 import "package:url_launcher/url_launcher.dart" show launch;
 import 'package:drive_helper/drive_helper.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+
 import 'FileAppendDialog.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
-  double _getDrawerWidth(context) {
+  double _getDrawerWidth() {
     double width = MediaQuery.of(context).size.width * 3 / 4;
     if (width > 280) {
       return 280;
@@ -65,14 +66,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: Text("BP Logger")),
       drawer: Container(
-        width: _getDrawerWidth(context),
+        width: _getDrawerWidth(),
         child: Drawer(
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               Container(
                 // Use drawer width to determine drawer header size
-                height: _getDrawerWidth(context) * 0.8,
+                height: _getDrawerWidth() * 0.8,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,8 +82,8 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Container(
-                          height: _getDrawerWidth(context) / 2.5,
-                          width: _getDrawerWidth(context) / 2.5,
+                          height: _getDrawerWidth() / 2.5,
+                          width: _getDrawerWidth() / 2.5,
                           child: driveHelper.avatar,
                         ),
                       ),

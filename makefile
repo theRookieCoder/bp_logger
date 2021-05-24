@@ -1,8 +1,5 @@
 .PHONY: all build clean
 
-debug:
-	flutter run
-
 test:
 	flutter run --release
 

@@ -3,6 +3,8 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'dart:async';
+
 import 'HomePage.dart';
 
 void main() => runApp(Phoenix(child: MyApp()));
@@ -57,7 +59,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BP Logger',
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Colors.blue,
@@ -87,22 +88,7 @@ class _MyAppState extends State<MyApp> {
           // If future resolved with an error, show a page with the error
           else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasError) {
-            child = Scaffold(
-              body: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "BP Logger encountered an error",
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                  Text(
-                    "Error: ${snapshot.error}",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.robotoMono().apply(),
-                  ),
-                ],
-              ),
-            );
+            child = ErrorPage(error: snapshot.error);
           }
 
           // If future did not resolve yet, show progress indicator
@@ -124,6 +110,61 @@ class _MyAppState extends State<MyApp> {
             child: child,
           );
         },
+      ),
+    );
+  }
+}
+
+class ErrorPage extends StatefulWidget {
+  const ErrorPage({
+    Key? key,
+    required this.error,
+  }) : super(key: key);
+  final dynamic error;
+
+  @override
+  _ErrorPageState createState() => _ErrorPageState();
+}
+
+class _ErrorPageState extends State<ErrorPage> {
+  int countdown = 10;
+  late final timer;
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+      (providedTimer) {
+        if (countdown != 0) {
+          setState(() => countdown--);
+        } else {
+          providedTimer.cancel();
+          Phoenix.rebirth(context);
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "BP Logger encountered an error",
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            Text(
+              "Error: ${widget.error}",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.robotoMono(),
+            ),
+            Text("Restarting in $countdown seconds"),
+          ],
+        ),
       ),
     );
   }

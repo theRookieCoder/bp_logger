@@ -17,7 +17,7 @@ dependencies:
   package_info_plus: ^1.0.1 # For getting version
   google_fonts: ^2.0.0 # For monospaced font
   animated_check: ^1.0.2 # For animated checkmark
-  drive_helper: ^1.2.4 # For Google Drive
+  drive_helper: ^1.2.5 # For Google Drive
   flutter_phoenix: ^1.0.0 # For restarting app
 
 dev_dependencies:

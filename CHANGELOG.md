@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.4]
+
+- Added app icon as asset
+- Added app icon to `AboutDialog`
+- Added Flutter to drawer
+- Changed drawer `ListView` to `Column`
+- Changed website favicon and PWA icons to use app icon
+
 ## [1.3.3]
 
 - Changed support page

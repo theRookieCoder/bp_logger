@@ -68,12 +68,11 @@ class _HomePageState extends State<HomePage> {
       drawer: Container(
         width: _getDrawerWidth(),
         child: Drawer(
-          child: ListView(
-            physics: NeverScrollableScrollPhysics(),
+          child: Column(
             children: <Widget>[
               Container(
                 // Use drawer width to determine drawer header size
-                height: _getDrawerWidth() * 0.8,
+                height: _getDrawerWidth() * 0.9,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -142,38 +141,39 @@ class _HomePageState extends State<HomePage> {
                       return AboutDialog(
                         applicationName: "BP Logger",
                         applicationVersion: "Version ${widget.version}",
+                        applicationIcon: Image.asset(
+                          "assets/Icon_298x298.png",
+                          scale: 5,
+                        ),
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "This app is open sourced ",
-                                    style: Theme.of(context).textTheme.caption,
-                                  ),
-                                  TextSpan(
-                                    text: "in Github",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .caption!
-                                        .apply(
-                                          color: Colors.blue,
-                                        ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () async => launch(
-                                          "https://www.github.com/theRookieCoder/bp_logger",
-                                          forceWebView: true,
-                                          enableJavaScript: true,
-                                          statusBarBrightness:
-                                              Theme.of(context).brightness),
-                                  ),
-                                  TextSpan(
-                                    text: " under the AGPL 3.0 License",
-                                    style: Theme.of(context).textTheme.caption,
-                                  ),
-                                ],
-                              ),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "This app is open sourced ",
+                                  style: Theme.of(context).textTheme.caption,
+                                ),
+                                TextSpan(
+                                  text: "in Github",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .caption!
+                                      .apply(
+                                        color: Colors.blue,
+                                      ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async => launch(
+                                        "https://www.github.com/theRookieCoder/bp_logger",
+                                        forceWebView: true,
+                                        enableJavaScript: true,
+                                        statusBarBrightness:
+                                            Theme.of(context).brightness),
+                                ),
+                                TextSpan(
+                                  text: " under the AGPL 3.0 License",
+                                  style: Theme.of(context).textTheme.caption,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -181,6 +181,12 @@ class _HomePageState extends State<HomePage> {
                     },
                   );
                 },
+              ),
+              Spacer(),
+              ListTile(
+                leading: FlutterLogo(size: 30),
+                title: Text("Powered by Flutter"),
+                onTap: () => launch("https://www.flutter.dev"),
               ),
             ],
           ),

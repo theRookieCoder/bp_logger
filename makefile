@@ -1,15 +1,12 @@
 .PHONY: all build clean
 
-test:
-	flutter run --release
-
 clean:
 	flutter clean
 	rm -vrf Payload
 	rm *.apk
 	rm *.ipa
 
-build:
+release:
 	flutter pub get
 	flutter build apk
 	flutter build ios

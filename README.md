@@ -6,18 +6,6 @@ BP Logger is a Flutter app that allows you to keep track of your BP by logging i
 To use BP Logger, you must first sign in with Google. Then BP Logger will use your Google account to access your Google Drive (with your permission).  
 After that, BP Logger can add the date, time, diastolic, and systolic values to a GSheets file called log.
 
-## Building
-
-If you want to install the app by building from source:
-
-- Install Dart and Flutter SDK on your computer, they're pretty large in size
-- Download the source files using `gh repo clone theRookieCoder/bp_logger`
-- `cd` into the source folder
-- Connect your Android or iPhone using a usb cable (or wirelessly if you know how to do that)
-- Check that Flutter can see your phone by running `flutter devices`
-- Run `flutter run --release`
-- If you run into issues, try running `flutter doctor` and seeing if that helps
-
 ## Installing
 
 Currently, BP Logger is not available in any app stores and hence has to sideloaded.
@@ -62,3 +50,11 @@ There are 2 ways of sideloading. The easiest is using AltStore
 - It should install and as long as your iPhone is connected to your computer once a week, it should renew
 
 You can also the variety of other method, such as [this](installonair.com) website, or building from source
+
+## From source
+
+> You will need a Mac for building on iOS
+
+- Install Dart and Flutter
+- Clone this repository
+- Connect your device, make sure Flutter can pick it up, and run `flutter run --release`

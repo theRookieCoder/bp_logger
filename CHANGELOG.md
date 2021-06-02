@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.5]
+
+- Added Flutter trademark notice
+- Altered Flutter text
+
 ## [1.3.4]
 
 - Added app icon as asset

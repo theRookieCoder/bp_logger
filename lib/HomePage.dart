@@ -176,6 +176,10 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
+                          Text(
+                            "\n\nFlutter and the related logo are trademarks of Google LLC. We are not endorsed by or affiliated with Google LLC",
+                            style: Theme.of(context).textTheme.caption,
+                          ),
                         ],
                       );
                     },
@@ -185,7 +189,7 @@ class _HomePageState extends State<HomePage> {
               Spacer(),
               ListTile(
                 leading: FlutterLogo(size: 30),
-                title: Text("Powered by Flutter"),
+                title: Text("Made with the Flutter™ SDK"),
                 onTap: () => launch("https://www.flutter.dev"),
               ),
             ],

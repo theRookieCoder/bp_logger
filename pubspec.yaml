@@ -4,7 +4,7 @@ repository: https://www.github.com/theRookieCoder/bp_logger
 publish_to: "none"
 
 # The following defines the version and build number for your application.
-version: 1.3.4
+version: 1.3.5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

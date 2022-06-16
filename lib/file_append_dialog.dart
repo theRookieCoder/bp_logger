@@ -14,10 +14,10 @@ class FileAppendDialog extends StatefulWidget {
   final String logFileID;
 
   @override
-  _FileAppendDialogState createState() => _FileAppendDialogState();
+  FileAppendDialogState createState() => FileAppendDialogState();
 }
 
-class _FileAppendDialogState extends State<FileAppendDialog>
+class FileAppendDialogState extends State<FileAppendDialog>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -28,13 +28,13 @@ class _FileAppendDialogState extends State<FileAppendDialog>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 700),
     );
 
-    _animation = new Tween<double>(
+    _animation = Tween<double>(
       begin: 0,
       end: 1,
-    ).animate(new CurvedAnimation(
+    ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOutCirc,
     ));
@@ -47,7 +47,7 @@ class _FileAppendDialogState extends State<FileAppendDialog>
         future: widget.driveHelper.appendFile(
           widget.logFileID,
           widget.text,
-          mime: DriveHelper.mime.export.csv,
+          mime: ExportMimeTypes.csv,
         ),
         builder: (context, snapshot) {
           // If future completed and has no errors
@@ -76,8 +76,8 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
                     child: Text("OK"),
                   ),
                 ),
@@ -101,8 +101,8 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                     style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
+                const Padding(
+                  padding: EdgeInsets.all(20.0),
                   child: Icon(
                     Icons.close,
                     size: 100,
@@ -113,8 +113,8 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
                     child: Text("OK"),
                   ),
                 ),
@@ -136,11 +136,11 @@ class _FileAppendDialogState extends State<FileAppendDialog>
                     style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
-                Container(
+                const SizedBox(
                   height: 150,
                   width: 150,
                   child: Padding(
-                    padding: const EdgeInsets.all(40.0),
+                    padding: EdgeInsets.all(40.0),
                     child: CircularProgressIndicator(),
                   ),
                 ),

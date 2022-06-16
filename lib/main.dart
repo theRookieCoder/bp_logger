@@ -5,16 +5,17 @@ import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:async';
 
-import 'HomePage.dart';
+import 'home_page.dart';
 
 void main() => runApp(Phoenix(child: MyApp()));
 
+// ignore: use_key_in_widget_constructors
 class MyApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   final driveHelper = DriveHelper();
   late String logFileID;
   late String version;
@@ -22,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initialise() async {
     late String appFolderID;
 
-    await driveHelper.signInAndInit([DriveHelper.scopes.app]);
+    await driveHelper.signInAndInit([DriveScopes.app]);
 
     await driveHelper.getFileID("BP Logger").then(
       (files) {
@@ -30,10 +31,9 @@ class _MyAppState extends State<MyApp> {
       },
     ).catchError(
       (error) async {
-        print(error);
         appFolderID = await driveHelper.createFile(
           "BP Logger",
-          DriveHelper.mime.files.folder,
+          FileMimeTypes.folder,
         );
       },
     );
@@ -43,10 +43,9 @@ class _MyAppState extends State<MyApp> {
       },
     ).catchError(
       (error) async {
-        print(error);
         logFileID = await driveHelper.createFile(
           "log.csv",
-          DriveHelper.mime.files.file,
+          FileMimeTypes.file,
           text: "Date, Time, Diastolic, Systolic",
           parents: [appFolderID],
         );
@@ -60,14 +59,19 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.light,
+          seedColor: Colors.indigo,
+        ),
         brightness: Brightness.light,
-        primaryColor: Colors.blue,
-        accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
       darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.dark,
+          seedColor: Colors.indigo,
+        ),
         brightness: Brightness.dark,
-        accentColor: Colors.blueAccent,
         fontFamily: 'Roboto',
       ),
       home: FutureBuilder(
@@ -99,14 +103,14 @@ class _MyAppState extends State<MyApp> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width / 1.5,
                   height: MediaQuery.of(context).size.width / 1.5,
-                  child: CircularProgressIndicator(strokeWidth: 10),
+                  child: const CircularProgressIndicator(strokeWidth: 10),
                 ),
               ),
             );
           }
 
           return AnimatedSwitcher(
-            duration: Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 400),
             child: child,
           );
         },
@@ -123,18 +127,18 @@ class ErrorPage extends StatefulWidget {
   final dynamic error;
 
   @override
-  _ErrorPageState createState() => _ErrorPageState();
+  ErrorPageState createState() => ErrorPageState();
 }
 
-class _ErrorPageState extends State<ErrorPage> {
+class ErrorPageState extends State<ErrorPage> {
   int countdown = 10;
-  late final timer;
+  late final Timer timer;
 
   @override
   void initState() {
     super.initState();
     timer = Timer.periodic(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       (providedTimer) {
         if (countdown != 0) {
           setState(() => countdown--);

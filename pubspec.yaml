@@ -4,7 +4,7 @@ repository: https://www.github.com/theRookieCoder/bp_logger
 publish_to: "none"
 
 # The following defines the version and build number for your application.
-version: 1.3.5
+version: 1.3.6
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -13,23 +13,24 @@ dependencies:
   flutter:
     sdk: flutter # Flutter SDK
   intl: ^0.17.0 # For datetime stuff
-  url_launcher: ^6.0.3 # For opening the log file
-  package_info_plus: ^1.0.1 # For getting version
-  google_fonts: ^2.0.0 # For monospaced font
-  animated_check: ^1.0.2 # For animated checkmark
-  drive_helper: ^1.2.5 # For Google Drive
+  url_launcher: ^6.1.3 # For opening the log file
+  package_info_plus: ^1.4.2 # For getting version
+  google_fonts: ^3.0.1 # For monospaced font
+  animated_check: ^1.0.5 # For animated checkmark
+  drive_helper: ^1.3.1 # For Google Drive
   flutter_phoenix: ^1.0.0 # For restarting app
+  flutter_lints: ^2.0.1
 
 dev_dependencies:
-  # flutter_launcher_icons: "^0.8.0"
+  flutter_launcher_icons: "^0.9.3"
 
 flutter_icons:
   android: true
   ios: true
   image_path: "assets/Icon_298x298.png"
+  adaptive_icon_background: E0E0D9
 
 flutter:
+  uses-material-design: true
   assets:
     - assets/Icon_298x298.png
-
-  uses-material-design: true

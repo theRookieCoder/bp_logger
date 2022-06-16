@@ -2,11 +2,11 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart" show FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat;
 import "package:flutter/gestures.dart" show TapGestureRecognizer;
-import "package:url_launcher/url_launcher.dart" show launch;
+import "package:url_launcher/url_launcher.dart" show launchUrl;
 import 'package:drive_helper/drive_helper.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
-import 'FileAppendDialog.dart';
+import 'file_append_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -20,11 +20,11 @@ class HomePage extends StatefulWidget {
   final String version;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  DateTime date = new DateTime.now();
+class HomePageState extends State<HomePage> {
+  DateTime date = DateTime.now();
   TextEditingController diastolicTEC = TextEditingController(); // Diastolic
   TextEditingController systolicTEC = TextEditingController(); // Systolic
   late DriveHelper driveHelper; // "Backend" interface
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime.now().subtract(Duration(days: 7)),
+      firstDate: DateTime.now().subtract(const Duration(days: 7)),
       lastDate: DateTime.now(),
     );
     if (picked != null && picked != date) {
@@ -64,13 +64,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("BP Logger")),
-      drawer: Container(
+      appBar: AppBar(title: const Text("BP Logger")),
+      drawer: SizedBox(
         width: _getDrawerWidth(),
         child: Drawer(
           child: Column(
             children: <Widget>[
-              Container(
+              SizedBox(
                 // Use drawer width to determine drawer header size
                 height: _getDrawerWidth() * 0.9,
                 child: DrawerHeader(
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                       // Profile picture of user
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Container(
+                        child: SizedBox(
                           height: _getDrawerWidth() / 2.5,
                           width: _getDrawerWidth() / 2.5,
                           child: driveHelper.avatar,
@@ -108,32 +108,34 @@ class _HomePageState extends State<HomePage> {
               ),
               // For logging out
               ListTile(
-                leading: Icon(Icons.logout),
-                title: Text("Log out"),
+                leading: const Icon(Icons.logout),
+                title: const Text("Log out"),
                 onTap: () async {
                   await driveHelper.signOut();
+                  // ignore: use_build_context_synchronously
                   Phoenix.rebirth(context);
                 },
               ),
               // For showing the log file
               ListTile(
-                leading: Icon(Icons.insert_drive_file_outlined),
-                title: Text("Access file"),
-                onTap: () async => launch(
+                leading: const Icon(Icons.insert_drive_file_outlined),
+                title: const Text("Access file"),
+                onTap: () async => launchUrl(Uri.parse(
                   "https://docs.google.com/spreadsheets/d/${widget.logFileID}/",
-                ),
+                )),
               ),
               // For opening the support page
               ListTile(
-                leading: Icon(Icons.contact_support_outlined),
-                title: Text("Get support"),
-                onTap: () =>
-                    launch("https://therookiecoder.github.io/bp_logger"),
+                leading: const Icon(Icons.contact_support_outlined),
+                title: const Text("Get support"),
+                onTap: () => launchUrl(
+                  Uri.parse("https://therookiecoder.github.io/bp_logger"),
+                ),
               ),
               // For showing information about the app e.g. version
               ListTile(
-                leading: Icon(Icons.info_outline_rounded),
-                title: Text("About"),
+                leading: const Icon(Icons.info_outline_rounded),
+                title: const Text("About"),
                 onTap: () {
                   showDialog(
                     context: context,
@@ -162,12 +164,11 @@ class _HomePageState extends State<HomePage> {
                                         color: Colors.blue,
                                       ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () async => launch(
+                                    ..onTap = () async {
+                                      launchUrl(Uri.parse(
                                         "https://www.github.com/theRookieCoder/bp_logger",
-                                        forceWebView: true,
-                                        enableJavaScript: true,
-                                        statusBarBrightness:
-                                            Theme.of(context).brightness),
+                                      ));
+                                    },
                                 ),
                                 TextSpan(
                                   text: " under the AGPL 3.0 License",
@@ -186,11 +187,11 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
-              Spacer(),
+              const Spacer(),
               ListTile(
-                leading: FlutterLogo(size: 30),
-                title: Text("Made with the Flutter™ SDK"),
-                onTap: () => launch("https://www.flutter.dev"),
+                leading: const FlutterLogo(size: 30),
+                title: const Text("Made with the Flutter™ SDK"),
+                onTap: () => launchUrl(Uri.parse("https://www.flutter.dev")),
               ),
             ],
           ),
@@ -217,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   // For changing the date
                   IconButton(
-                    icon: Icon(Icons.edit),
+                    icon: const Icon(Icons.edit),
                     iconSize: 30.0,
                     tooltip: "Edit date",
                     onPressed: () async {
@@ -245,12 +246,12 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                   controller: diastolicTEC,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 25.0,
                   ),
-                  decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderSide: new BorderSide(),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(),
                     ),
                     labelText: "Diastolic",
                   ),
@@ -278,12 +279,12 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                   controller: systolicTEC,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 25.0,
                   ),
-                  decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderSide: new BorderSide(),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(),
                     ),
                     labelText: "Systolic",
                   ),
@@ -297,8 +298,8 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.storage),
-        label: Text("ADD TO FILE"),
+        icon: const Icon(Icons.storage),
+        label: const Text("ADD TO FILE"),
         onPressed: () async {
           // Don"t run if values are not correct
           if (formKey.currentState != null &&

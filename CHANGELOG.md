@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0]
+
+- Added lints
+- Updated dependencies
+- Remade the ios and android folder to update them to the latest Flutter version
+
 ## [1.3.5]
 
 - Added Flutter trademark notice

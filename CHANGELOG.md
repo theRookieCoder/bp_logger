@@ -1,6 +1,20 @@
 # Changelog
 
-## [1.4.0]
+## `1.4.0`
+### 05.02.2023
+
+- Update dependencies, moved flutter lints to dev dependencies
+- Small tweaks to Android and iOS applications
+- Slight tweaks to the UI everywhere
+- Generally mprove a lot of code
+- Update to Material v3
+- Store futures used in `FutureBuilder`s as state variables to make hot reload work
+- Change state-initialised assignments in `initState` to direct assignments using `late`
+- Explicitly specify whether to open links in the browser, or in-app
+- Properly unfocus text fields so that the keyboard doesn't incorrectly open up anymore
+- Almost fully rewrite `FileAppendDialog` to be more consistent and reduce duplicate code
+
+## [1.3.6]
 
 - Added lints
 - Updated dependencies

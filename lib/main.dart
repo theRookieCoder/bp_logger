@@ -4,78 +4,62 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:async';
+import 'dart:ui';
 
 import 'home_page.dart';
 
-void main() => runApp(Phoenix(child: MyApp()));
+void main() => runApp(Phoenix(child: const MyApp()));
 
-// ignore: use_key_in_widget_constructors
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   MyAppState createState() => MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
-  final driveHelper = DriveHelper();
+  late DriveHelper driveHelper;
   late String logFileID;
   late String version;
+  late var future = initialise();
 
   Future<void> initialise() async {
-    late String appFolderID;
+    driveHelper = await DriveHelper.initialise([DriveScopes.app]);
 
-    await driveHelper.signInAndInit([DriveScopes.app]);
+    final appFolderID = await driveHelper
+        .getFileID("BP Logger")
+        .then((files) => files[0])
+        .catchError((error) async =>
+            await driveHelper.createFile("BP Logger", FileMIMETypes.folder));
 
-    await driveHelper.getFileID("BP Logger").then(
-      (files) {
-        appFolderID = files[0];
-      },
-    ).catchError(
-      (error) async {
-        appFolderID = await driveHelper.createFile(
-          "BP Logger",
-          FileMimeTypes.folder,
-        );
-      },
-    );
-    await driveHelper.getFileID("log").then(
-      (files) {
-        logFileID = files[0];
-      },
-    ).catchError(
-      (error) async {
-        logFileID = await driveHelper.createFile(
-          "log.csv",
-          FileMimeTypes.file,
-          text: "Date, Time, Diastolic, Systolic",
-          parents: [appFolderID],
-        );
-      },
-    );
+    logFileID = await driveHelper
+        .getFileID("log")
+        .then((files) => files[0])
+        .catchError((error) async => await driveHelper.createFile(
+              "log.csv",
+              FileMIMETypes.file,
+              text: "Date, Time, Diastolic, Systolic",
+              parents: [appFolderID],
+            ));
 
-    await PackageInfo.fromPlatform().then((info) => version = info.version);
+    version = (await PackageInfo.fromPlatform()).version;
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.light,
-          seedColor: Colors.indigo,
-        ),
+        colorSchemeSeed: Colors.blue,
         brightness: Brightness.light,
-        fontFamily: 'Roboto',
+        useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: Colors.indigo,
-        ),
+        colorSchemeSeed: Colors.blue,
         brightness: Brightness.dark,
-        fontFamily: 'Roboto',
+        useMaterial3: true,
       ),
       home: FutureBuilder(
-        future: initialise(),
+        future: future,
         builder: (context, snapshot) {
           Widget child;
 
@@ -95,22 +79,22 @@ class MyAppState extends State<MyApp> {
             child = ErrorPage(error: snapshot.error);
           }
 
-          // If future did not resolve yet, show progress indicator
+          // If future did not resolve yet, show a progress indicator
           else {
             child = Scaffold(
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.width / 1.5,
-                  child: const CircularProgressIndicator(strokeWidth: 10),
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.width / 2,
+                  child: const CircularProgressIndicator(strokeWidth: 15),
                 ),
               ),
             );
           }
 
           return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 300),
             child: child,
           );
         },
@@ -131,8 +115,8 @@ class ErrorPage extends StatefulWidget {
 }
 
 class ErrorPageState extends State<ErrorPage> {
-  int countdown = 10;
-  late final Timer timer;
+  var countdown = 5;
+  late Timer timer;
 
   @override
   void initState() {
@@ -153,20 +137,36 @@ class ErrorPageState extends State<ErrorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Error"),
+        elevation: 5,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              "BP Logger encountered an error",
-              style: Theme.of(context).textTheme.subtitle1,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                "BP Logger encountered an error :(",
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
             ),
+            Container(height: 20),
             Text(
               "Error: ${widget.error}",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.robotoMono(),
+              style: GoogleFonts.jetBrainsMono(),
             ),
-            Text("Restarting in $countdown seconds"),
+            Container(height: 20),
+            countdown == 0
+                ? const Text("Restarting...")
+                : Text(
+                    "Restarting in $countdown seconds",
+                    style: const TextStyle(
+                        fontFeatures: [FontFeature.tabularFigures()]),
+                  ),
           ],
         ),
       ),

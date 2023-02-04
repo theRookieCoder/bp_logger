@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart" show FilteringTextInputFormatter;
 import "package:intl/intl.dart" show DateFormat;
 import "package:flutter/gestures.dart" show TapGestureRecognizer;
-import "package:url_launcher/url_launcher.dart" show launchUrl;
+import "package:url_launcher/url_launcher.dart" show LaunchMode, launchUrl;
 import 'package:drive_helper/drive_helper.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
@@ -27,17 +27,10 @@ class HomePageState extends State<HomePage> {
   DateTime date = DateTime.now();
   TextEditingController diastolicTEC = TextEditingController(); // Diastolic
   TextEditingController systolicTEC = TextEditingController(); // Systolic
-  late DriveHelper driveHelper; // "Backend" interface
+  late DriveHelper driveHelper = widget.driveHelper; // "Backend" interface
   final formKey = GlobalKey<FormState>();
 
-  // Runs when the program starts
-  @override
-  void initState() {
-    super.initState();
-    driveHelper = widget.driveHelper;
-  }
-
-  // To get 3/4ths of the screen to display the drawer to a suitable width on all devices
+  // Get 3/4ths of the screen to display the drawer to a suitable width on all devices
   double _getDrawerWidth() {
     double width = MediaQuery.of(context).size.width * 3 / 4;
     if (width > 280) {
@@ -47,8 +40,8 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  // Datepicker for selecting the date
-  _selectDate(BuildContext context) async {
+  //Show a datepicker for selecting the date
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: date,
@@ -56,7 +49,7 @@ class HomePageState extends State<HomePage> {
       lastDate: DateTime.now(),
     );
     if (picked != null && picked != date) {
-      // Only update if user picked and isn"t the same as before
+      // Only update if user picked and isn't the same as before
       setState(() => date = picked);
     }
   }
@@ -64,7 +57,10 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("BP Logger")),
+      appBar: AppBar(
+        title: const Text("BP Logger"),
+        elevation: 5,
+      ),
       drawer: SizedBox(
         width: _getDrawerWidth(),
         child: Drawer(
@@ -72,17 +68,18 @@ class HomePageState extends State<HomePage> {
             children: <Widget>[
               SizedBox(
                 // Use drawer width to determine drawer header size
-                height: _getDrawerWidth() * 0.9,
+                height: _getDrawerWidth() * 1.1,
                 child: DrawerHeader(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       // Profile picture of user
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: SizedBox(
-                          height: _getDrawerWidth() / 2.5,
-                          width: _getDrawerWidth() / 2.5,
+                          height: _getDrawerWidth() / 2,
+                          width: _getDrawerWidth() / 2,
                           child: driveHelper.avatar,
                         ),
                       ),
@@ -91,7 +88,7 @@ class HomePageState extends State<HomePage> {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           driveHelper.name ?? "",
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context).textTheme.displaySmall,
                         ),
                       ),
                       // Email ID of user
@@ -99,7 +96,7 @@ class HomePageState extends State<HomePage> {
                         fit: BoxFit.scaleDown,
                         child: Text(
                           driveHelper.email,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       )
                     ],
@@ -120,24 +117,27 @@ class HomePageState extends State<HomePage> {
               ListTile(
                 leading: const Icon(Icons.insert_drive_file_outlined),
                 title: const Text("Access file"),
-                onTap: () async => launchUrl(Uri.parse(
-                  "https://docs.google.com/spreadsheets/d/${widget.logFileID}/",
-                )),
+                onTap: () async => await launchUrl(
+                  Uri.parse(
+                      "https://docs.google.com/spreadsheets/d/${widget.logFileID}/"),
+                  mode: LaunchMode.externalApplication,
+                ),
               ),
               // For opening the support page
               ListTile(
                 leading: const Icon(Icons.contact_support_outlined),
                 title: const Text("Get support"),
-                onTap: () => launchUrl(
+                onTap: () async => await launchUrl(
                   Uri.parse("https://therookiecoder.github.io/bp_logger"),
+                  mode: LaunchMode.inAppWebView,
                 ),
               ),
               // For showing information about the app e.g. version
               ListTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: const Text("About"),
-                onTap: () {
-                  showDialog(
+                onTap: () async {
+                  await showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AboutDialog(
@@ -145,41 +145,42 @@ class HomePageState extends State<HomePage> {
                         applicationVersion: "Version ${widget.version}",
                         applicationIcon: Image.asset(
                           "assets/Icon_298x298.png",
-                          scale: 5,
+                          scale: 4,
                         ),
                         children: <Widget>[
                           RichText(
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "This app is open sourced ",
-                                  style: Theme.of(context).textTheme.caption,
+                                  text:
+                                      "This app is open source. Its code is available ",
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 TextSpan(
-                                  text: "in Github",
+                                  text: "on GitHub",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .caption!
+                                      .bodySmall!
                                       .apply(
-                                        color: Colors.blue,
+                                        color: Colors.blueAccent,
                                       ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () async {
-                                      launchUrl(Uri.parse(
-                                        "https://www.github.com/theRookieCoder/bp_logger",
-                                      ));
-                                    },
+                                    ..onTap = () async => await launchUrl(
+                                          Uri.parse(
+                                              "https://www.github.com/theRookieCoder/bp_logger"),
+                                          mode: LaunchMode.externalApplication,
+                                        ),
                                 ),
                                 TextSpan(
                                   text: " under the AGPL 3.0 License",
-                                  style: Theme.of(context).textTheme.caption,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
                             ),
                           ),
                           Text(
-                            "\n\nFlutter and the related logo are trademarks of Google LLC. We are not endorsed by or affiliated with Google LLC",
-                            style: Theme.of(context).textTheme.caption,
+                            "\nFlutter and the related logo are trademarks of Google LLC. We are not endorsed by or affiliated with Google LLC",
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       );
@@ -191,7 +192,10 @@ class HomePageState extends State<HomePage> {
               ListTile(
                 leading: const FlutterLogo(size: 30),
                 title: const Text("Made with the Flutter™ SDK"),
-                onTap: () => launchUrl(Uri.parse("https://www.flutter.dev")),
+                onTap: () => launchUrl(
+                  Uri.parse("https://www.flutter.dev"),
+                  mode: LaunchMode.externalApplication,
+                ),
               ),
             ],
           ),
@@ -203,32 +207,36 @@ class HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // Invisible container to center the text
-                  Container(width: 50),
-                  // For displaying the date
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      DateFormat("d/M/y").format(date),
-                      style: Theme.of(context).textTheme.headline3,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    // Invisible container to center the text
+                    Container(width: 50),
+                    // For displaying the date
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Text(
+                        DateFormat("d/M/y").format(date),
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
                     ),
-                  ),
-                  // For changing the date
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    iconSize: 30.0,
-                    tooltip: "Edit date",
-                    onPressed: () async {
-                      await _selectDate(context);
-                    },
-                  ),
-                ],
+                    // For changing the date
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      iconSize: 30.0,
+                      tooltip: "Edit date",
+                      onPressed: () async => await _selectDate(context),
+                    ),
+                  ],
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                  horizontal: 30.0,
+                ),
                 child: TextFormField(
                   validator: (value) {
                     late int val;
@@ -246,13 +254,8 @@ class HomePageState extends State<HomePage> {
                     }
                   },
                   controller: diastolicTEC,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                  ),
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                    ),
+                    border: OutlineInputBorder(borderSide: BorderSide()),
                     labelText: "Diastolic",
                   ),
                   // Only digits, everything else gets rejected even if typed in
@@ -261,7 +264,10 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10.0,
+                  horizontal: 30.0,
+                ),
                 child: TextFormField(
                   validator: (value) {
                     late int val;
@@ -279,13 +285,8 @@ class HomePageState extends State<HomePage> {
                     }
                   },
                   controller: systolicTEC,
-                  style: const TextStyle(
-                    fontSize: 25.0,
-                  ),
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                    ),
+                    border: OutlineInputBorder(borderSide: BorderSide()),
                     labelText: "Systolic",
                   ),
                   // Only digits everything else is rejected even of typed in
@@ -298,29 +299,24 @@ class HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.storage),
-        label: const Text("ADD TO FILE"),
+        icon: const Icon(Icons.add),
+        label: const Text("ADD ENTRY"),
         onPressed: () async {
           // Don"t run if values are not correct
-          if (formKey.currentState != null &&
-              formKey.currentState!.validate()) {
+          if (formKey.currentState!.validate()) {
             // Get values from TextFieldControllers
             String diastolic = diastolicTEC.text;
             String systolic = systolicTEC.text;
-            // Dismiss keyboard once button is pressed
-            FocusScopeNode currentFocus = FocusScope.of(context);
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
 
-            String text =
-                "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic"; // Text that has to be appended
+            // Dismiss keyboard once button is pressed
+            FocusManager.instance.primaryFocus?.unfocus();
 
             await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return FileAppendDialog(
-                  text: text,
+                  text:
+                      "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic",
                   driveHelper: driveHelper,
                   logFileID: widget.logFileID,
                 );

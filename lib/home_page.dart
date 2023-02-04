@@ -25,8 +25,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   DateTime date = DateTime.now();
-  TextEditingController diastolicTEC = TextEditingController(); // Diastolic
   TextEditingController systolicTEC = TextEditingController(); // Systolic
+  TextEditingController diastolicTEC = TextEditingController(); // Diastolic
   late DriveHelper driveHelper = widget.driveHelper; // "Backend" interface
   final formKey = GlobalKey<FormState>();
 
@@ -245,18 +245,18 @@ class HomePageState extends State<HomePage> {
                     } else {
                       return "Enter a value";
                     }
-                    if (val > 120) {
+                    if (val > 200) {
                       return "Too high";
-                    } else if (val < 60) {
+                    } else if (val < 100) {
                       return "Too low";
                     } else {
                       return null;
                     }
                   },
-                  controller: diastolicTEC,
+                  controller: systolicTEC,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(borderSide: BorderSide()),
-                    labelText: "Diastolic",
+                    labelText: "Systolic",
                   ),
                   // Only digits, everything else gets rejected even if typed in
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -276,20 +276,20 @@ class HomePageState extends State<HomePage> {
                     } else {
                       return "Enter a value";
                     }
-                    if (val > 200) {
+                    if (val > 120) {
                       return "Too high";
-                    } else if (val < 100) {
+                    } else if (val < 60) {
                       return "Too low";
                     } else {
                       return null;
                     }
                   },
-                  controller: systolicTEC,
+                  controller: diastolicTEC,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(borderSide: BorderSide()),
-                    labelText: "Systolic",
+                    labelText: "Diastolic",
                   ),
-                  // Only digits everything else is rejected even of typed in
+                  // Only digits, everything else gets rejected even if typed in
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   keyboardType: TextInputType.number, // Number only keyboard
                 ),
@@ -305,8 +305,8 @@ class HomePageState extends State<HomePage> {
           // Don"t run if values are not correct
           if (formKey.currentState!.validate()) {
             // Get values from TextFieldControllers
-            String diastolic = diastolicTEC.text;
             String systolic = systolicTEC.text;
+            String diastolic = diastolicTEC.text;
 
             // Dismiss keyboard once button is pressed
             FocusManager.instance.primaryFocus?.unfocus();
@@ -316,7 +316,7 @@ class HomePageState extends State<HomePage> {
               builder: (BuildContext context) {
                 return FileAppendDialog(
                   text:
-                      "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $diastolic, $systolic",
+                      "${DateFormat("d/M/y").format(date)}, ${DateFormat.Hm().format(DateTime.now())}, $systolic, $diastolic",
                   driveHelper: driveHelper,
                   logFileID: widget.logFileID,
                 );
@@ -324,8 +324,8 @@ class HomePageState extends State<HomePage> {
               barrierDismissible: false,
             );
 
-            diastolicTEC.clear();
             systolicTEC.clear();
+            diastolicTEC.clear();
           }
         },
       ),

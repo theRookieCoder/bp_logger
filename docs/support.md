@@ -43,7 +43,7 @@ When opening the app for the first time
 
 You need to be connected to the internet to log your BP values!
 
-1. Enter your diastolic and systolic values in the respective fields
+1. Enter your systolic and diastolic values in the respective fields
 2. If you would like to log values to other dates, press the edit button beside the date to change the date
 3. You can change the date to anything from today to 2 weeks before
 4. Once you are done entering the values, press the 'Add to logs' button in the bottom right

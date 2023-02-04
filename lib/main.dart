@@ -38,7 +38,7 @@ class MyAppState extends State<MyApp> {
         .catchError((error) async => await driveHelper.createFile(
               "log.csv",
               FileMIMETypes.file,
-              text: "Date, Time, Diastolic, Systolic",
+              text: "Date, Time, Systolic, Diastolic",
               parents: [appFolderID],
             ));
 

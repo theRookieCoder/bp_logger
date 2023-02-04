@@ -4,7 +4,7 @@
 
 BP Logger is a Flutter app that allows you to keep track of your BP by logging it in a file in Google Drive.  
 To use BP Logger, you must first sign in with Google. Then BP Logger will use your Google account to access your Google Drive (with your permission).  
-After that, BP Logger can add the date, time, diastolic, and systolic values to a GSheets file called log.
+After that, BP Logger can add the date, time, systolic, and diastolic values to a GSheets file called log.
 
 ## Installing
 

@@ -4,9 +4,9 @@ on:
   push:
     branches: '**'
     paths:
-      "**.dart"
-      "pubspec.lock"
-      ".github/workflows/build_and_deploy.yml"
+      - "**.dart"
+      - "pubspec.lock"
+      - ".github/workflows/build_and_deploy.yml"
 
 jobs:
   build:

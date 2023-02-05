@@ -6,7 +6,7 @@
 - Update dependencies, moved flutter lints to dev dependencies
 - Small tweaks to Android and iOS applications
 - Slight tweaks to the UI everywhere
-- Generally mprove a lot of code
+- Generally improve a lot of code
 - Update to Material v3
 - Store futures used in `FutureBuilder`s as state variables to make hot reload work
 - Change state-initialised assignments in `initState` to direct assignments using `late`

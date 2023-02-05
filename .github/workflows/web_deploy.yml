@@ -6,6 +6,7 @@ on:
     paths:
       - "**.dart"
       - "pubspec.lock"
+      - "pubspec.yaml"
       - ".github/workflows/web_deploy.yml"
 
 jobs:

@@ -1,5 +1,11 @@
 # Changelog
 
+## `1.4.1`
+### 05.02.2023
+
+- Make progress indicator at most 200 pixels
+- Upload new version to the web
+
 ## `1.4.0`
 ### 05.02.2023
 

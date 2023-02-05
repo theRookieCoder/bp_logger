@@ -40,8 +40,9 @@ jobs:
           name: build-files
           path: build/web
       - name: Deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: w9jds/firebase-action@v11
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BP_LOGGER_ROOKIE_CODER }}'
-          projectId: bp-logger-rookie-coder
+          args: deploy
+        env:
+          GCP_SA_KEY: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BP_LOGGER_ROOKIE_CODER }}'
+          

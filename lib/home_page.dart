@@ -30,7 +30,6 @@ class HomePageState extends State<HomePage> {
   late DriveHelper driveHelper = widget.driveHelper; // "Backend" interface
   final formKey = GlobalKey<FormState>();
 
-  // Get 3/4ths of the screen to display the drawer to a suitable width on all devices
   double _getDrawerWidth() {
     double width = MediaQuery.of(context).size.width * 3 / 4;
     if (width > 280) {

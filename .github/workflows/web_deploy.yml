@@ -40,7 +40,7 @@ jobs:
           name: build-files
           path: build/web
       - name: Deploy
-        uses: w9jds/firebase-action@v11
+        uses: w9jds/firebase-action@master
         with:
           args: deploy
         env:

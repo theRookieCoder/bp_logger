@@ -21,9 +21,7 @@ class MyAppState extends State<MyApp> {
   late DriveHelper driveHelper;
   late String logFileID;
   late String version;
-  late var future = initialise();
-
-  Future<void> initialise() async {
+  late var future = () async {
     driveHelper = await DriveHelper.initialise([DriveScopes.app]);
 
     final appFolderID = await driveHelper
@@ -43,6 +41,15 @@ class MyAppState extends State<MyApp> {
             ));
 
     version = (await PackageInfo.fromPlatform()).version;
+  }();
+
+  double _getProgressIndicatorSize() {
+    double size = MediaQuery.of(context).size.width / 2;
+    if (size > 200) {
+      return 200;
+    } else {
+      return size;
+    }
   }
 
   @override
@@ -85,8 +92,8 @@ class MyAppState extends State<MyApp> {
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.width / 2,
+                  width: _getProgressIndicatorSize(),
+                  height: _getProgressIndicatorSize(),
                   child: const CircularProgressIndicator(strokeWidth: 15),
                 ),
               ),

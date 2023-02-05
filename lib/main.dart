@@ -43,7 +43,7 @@ class MyAppState extends State<MyApp> {
     version = (await PackageInfo.fromPlatform()).version;
   }();
 
-  double _getProgressIndicatorSize() {
+  double _getProgressIndicatorSize(BuildContext context) {
     double size = MediaQuery.of(context).size.width / 2;
     if (size > 200) {
       return 200;
@@ -92,8 +92,8 @@ class MyAppState extends State<MyApp> {
               backgroundColor: Colors.grey[850],
               body: Center(
                 child: SizedBox(
-                  width: _getProgressIndicatorSize(),
-                  height: _getProgressIndicatorSize(),
+                  width: _getProgressIndicatorSize(context),
+                  height: _getProgressIndicatorSize(context),
                   child: const CircularProgressIndicator(strokeWidth: 15),
                 ),
               ),

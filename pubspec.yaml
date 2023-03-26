@@ -10,15 +10,15 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter # Flutter SDK
-  intl: ^0.18.0 # For datetime formatting
-  url_launcher: ^6.1.9 # For opening the log file
-  package_info_plus: ^3.0.2 # For getting the app version
-  google_fonts: ^4.0.3 # For monospaced error font
-  animated_check: ^1.0.5 # For animated checkmark
-  drive_helper: ^1.4.0 # For Google Drive
-  flutter_phoenix: ^1.1.1 # For restarting the app
-  animations: ^2.0.7 # For Material animations
+    sdk: flutter
+  intl: ^0.18.0
+  url_launcher: ^6.1.9
+  package_info_plus: ^3.0.2
+  google_fonts: ^4.0.3
+  animated_check: ^1.0.5
+  drive_helper: ^1.4.0
+  flutter_phoenix: ^1.1.1
+  animations: ^2.0.7
 
 dev_dependencies:
   flutter_lints: ^2.0.1

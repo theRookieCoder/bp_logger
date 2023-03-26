@@ -1,10 +1,11 @@
-import 'package:drive_helper/drive_helper.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:async';
 import 'dart:ui';
+
+import 'package:drive_helper/drive_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'home_page.dart';
 
@@ -14,21 +15,24 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  MyAppState createState() => MyAppState();
+  LoginScreen createState() => LoginScreen();
 }
 
-class MyAppState extends State<MyApp> {
+class LoginScreen extends State<MyApp> {
   late DriveHelper driveHelper;
+  late PackageInfo packageInfo;
   late String logFileID;
-  late String version;
+  late Widget child;
   late var future = () async {
     driveHelper = await DriveHelper.initialise([DriveScopes.app]);
 
     final appFolderID = await driveHelper
         .getFileID("BP Logger")
         .then((files) => files[0])
-        .catchError((error) async =>
-            await driveHelper.createFile("BP Logger", FileMIMETypes.folder));
+        .catchError((error) async => await driveHelper.createFile(
+              "BP Logger",
+              FileMIMETypes.folder,
+            ));
 
     logFileID = await driveHelper
         .getFileID("log")
@@ -40,7 +44,7 @@ class MyAppState extends State<MyApp> {
               parents: [appFolderID],
             ));
 
-    version = (await PackageInfo.fromPlatform()).version;
+    packageInfo = await PackageInfo.fromPlatform();
   }();
 
   double _getProgressIndicatorSize(BuildContext context) {
@@ -53,67 +57,65 @@ class MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.light,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
-      home: FutureBuilder(
-        future: future,
-        builder: (context, snapshot) {
-          Widget child;
+  Widget build(BuildContext context) => MaterialApp(
+        theme: ThemeData(
+          colorSchemeSeed: Colors.blue,
+          brightness: Brightness.light,
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(elevation: 5),
+        ),
+        darkTheme: ThemeData(
+          colorSchemeSeed: Colors.blue,
+          brightness: Brightness.dark,
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(elevation: 5),
+        ),
+        home: FutureBuilder(
+          future: future,
+          builder: (context, snapshot) {
+            // If future resolved without any errors, show the homepage
+            if (snapshot.connectionState == ConnectionState.done &&
+                !snapshot.hasError) {
+              child = HomePage(
+                driveHelper: driveHelper,
+                logFileID: logFileID,
+                packageInfo: packageInfo,
+              );
+            }
 
-          // If future resolved without any errors, show the homepage
-          if (snapshot.connectionState == ConnectionState.done &&
-              !snapshot.hasError) {
-            child = HomePage(
-              driveHelper: driveHelper,
-              logFileID: logFileID,
-              version: version,
-            );
-          }
+            // If future resolved with an error, show a page with the error
+            else if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasError) {
+              child = ErrorPage(snapshot.error);
+            }
 
-          // If future resolved with an error, show a page with the error
-          else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasError) {
-            child = ErrorPage(error: snapshot.error);
-          }
-
-          // If future did not resolve yet, show a progress indicator
-          else {
-            child = Scaffold(
-              backgroundColor: Colors.grey[850],
-              body: Center(
-                child: SizedBox(
-                  width: _getProgressIndicatorSize(context),
-                  height: _getProgressIndicatorSize(context),
-                  child: const CircularProgressIndicator(strokeWidth: 15),
+            // If future did not resolve yet, show a progress indicator
+            else {
+              child = Scaffold(
+                // backgroundColor: Colors.grey[850],
+                body: Center(
+                  child: SizedBox(
+                    width: _getProgressIndicatorSize(context),
+                    height: _getProgressIndicatorSize(context),
+                    child: const CircularProgressIndicator(strokeWidth: 10),
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: child,
-          );
-        },
-      ),
-    );
-  }
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: child,
+            );
+          },
+        ),
+      );
 }
 
 class ErrorPage extends StatefulWidget {
-  const ErrorPage({
+  const ErrorPage(
+    this.error, {
     Key? key,
-    required this.error,
   }) : super(key: key);
   final dynamic error;
 
@@ -130,11 +132,11 @@ class ErrorPageState extends State<ErrorPage> {
     super.initState();
     timer = Timer.periodic(
       const Duration(seconds: 1),
-      (providedTimer) {
+      (timer) {
         if (countdown != 0) {
           setState(() => countdown--);
         } else {
-          providedTimer.cancel();
+          timer.cancel();
           Phoenix.rebirth(context);
         }
       },
@@ -142,14 +144,9 @@ class ErrorPageState extends State<ErrorPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Error"),
-        elevation: 5,
-      ),
-      body: Center(
-        child: Column(
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text("Error")),
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -171,12 +168,11 @@ class ErrorPageState extends State<ErrorPage> {
                 ? const Text("Restarting...")
                 : Text(
                     "Restarting in $countdown seconds",
-                    style: const TextStyle(
-                        fontFeatures: [FontFeature.tabularFigures()]),
+                    style: const TextStyle(fontFeatures: [
+                      FontFeature.tabularFigures(),
+                    ]),
                   ),
           ],
         ),
-      ),
-    );
-  }
+      );
 }

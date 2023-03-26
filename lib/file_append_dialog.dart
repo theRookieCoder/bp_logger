@@ -1,7 +1,7 @@
+import 'package:animated_check/animated_check.dart';
 import 'package:drive_helper/drive_helper.dart';
 import 'package:drive_helper/export_mime_types.dart';
 import 'package:flutter/material.dart';
-import 'package:animated_check/animated_check.dart';
 
 class FileAppendDialog extends StatefulWidget {
   const FileAppendDialog({
@@ -24,63 +24,69 @@ class FileAppendDialogState extends State<FileAppendDialog>
     vsync: this,
     duration: const Duration(milliseconds: 700),
   );
-  late final _animation = Tween<double>(begin: 0, end: 1).animate(
-    CurvedAnimation(parent: _animationController, curve: Curves.easeInOutCirc),
-  );
   late var future = widget.driveHelper.appendFile(
     widget.logFileID,
     widget.text,
     mime: SpreadsheetExportMIMETypes.csv,
   );
 
-  AnimatedCheck showCheck(double size) {
+  AnimatedCheck showCheck() {
     _animationController.forward();
     return AnimatedCheck(
-      progress: _animation,
+      progress: Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOutCirc,
+      )),
       color: Colors.green,
-      size: size,
+      size: 150,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: future,
-      builder: (context, snapshot) => AlertDialog(
-        title: Text(
-          snapshot.connectionState == ConnectionState.done
-              ? snapshot.hasError
-                  ? "Error"
-                  : "Success"
-              : "Loading",
-        ),
-        content: Center(
-          heightFactor: 1,
-          child: SizedBox.square(
-            dimension: 100,
-            child: snapshot.connectionState == ConnectionState.done
+  Widget build(BuildContext context) => FutureBuilder(
+        future: future,
+        builder: (context, snapshot) => AlertDialog(
+          title: Text(
+            snapshot.connectionState == ConnectionState.done
                 ? snapshot.hasError
-                    ? const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                        size: 100,
-                      )
-                    : showCheck(100)
-                : const CircularProgressIndicator(),
+                    ? "Error"
+                    : "Success"
+                : "Loading",
           ),
+          content: Center(
+            heightFactor: 1,
+            child: SizedBox.square(
+              dimension: 150,
+              child: snapshot.connectionState == ConnectionState.done
+                  ? snapshot.hasError
+                      ? const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 130,
+                        )
+                      : showCheck()
+                  : const Padding(
+                      padding: EdgeInsets.all(20),
+                      child: CircularProgressIndicator(strokeWidth: 5),
+                    ),
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            snapshot.connectionState != ConnectionState.done
+                ? OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text("CANCEL"),
+                    ))
+                : FilledButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Text("OK"),
+                    )),
+          ],
         ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          snapshot.connectionState == ConnectionState.done
-              ? ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text("OK"),
-                  ))
-              : Container(),
-        ],
-      ),
-    );
-  }
+      );
 }

@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.therookiecoder.bp_logger"
+        applicationId "io.github.therookiecoder.bp_logger"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

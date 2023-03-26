@@ -1,5 +1,14 @@
 # Changelog
 
+## `1.5.0`
+### 26.03.2023
+
+- Add material animations to page transitions and dialog popups
+- Add custom about dialog
+- Make file append dialog not change size
+- Use callbacks instead of phoenix
+- Change launcher icons package
+
 ## `1.4.1`
 ### 05.02.2023
 

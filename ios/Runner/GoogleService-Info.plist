@@ -3,19 +3,19 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>732045653207-k60g97899cmed958fn5j3jf4st316190.apps.googleusercontent.com</string>
+	<string>732045653207-3gvsaa1u6j7nt7iulirl8qiou0ekc8r4.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.732045653207-k60g97899cmed958fn5j3jf4st316190</string>
+	<string>com.googleusercontent.apps.732045653207-3gvsaa1u6j7nt7iulirl8qiou0ekc8r4</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>732045653207-fbu6k0vj1uvec8akgkg0bjvj1s9efqs3.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAU2rO9QcoqzrALf4ytdzYqV32WljE1kJ8</string>
+	<string>AIzaSyB3E6q1zBrLOEHM2H5tMF0msyDjvvIBN_U</string>
 	<key>GCM_SENDER_ID</key>
 	<string>732045653207</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.therookiecoder.bpLogger</string>
+	<string>io.github.theRookieCoder.bpLogger</string>
 	<key>PROJECT_ID</key>
 	<string>bp-logger-rookie-coder</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:732045653207:ios:5ea16f7e217c0b3d0b2c92</string>
+	<string>1:732045653207:ios:0c7aa116af56e3af0b2c92</string>
 </dict>
 </plist>

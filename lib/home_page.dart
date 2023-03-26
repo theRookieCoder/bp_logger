@@ -1,13 +1,12 @@
-import "package:bp_logger/about_dialog.dart";
-import "package:bp_logger/animated_dialog_wrapper.dart";
 import 'package:drive_helper/drive_helper.dart';
 import "package:flutter/material.dart";
 import "package:flutter/services.dart" show FilteringTextInputFormatter;
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import "package:intl/intl.dart" show DateFormat;
 import "package:package_info_plus/package_info_plus.dart";
 import "package:url_launcher/url_launcher.dart" show LaunchMode, launchUrl;
 
+import 'about_dialog.dart';
+import 'animated_dialog_wrapper.dart';
 import 'file_append_dialog.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,10 +15,12 @@ class HomePage extends StatefulWidget {
     required this.driveHelper,
     required this.logFileID,
     required this.packageInfo,
+    required this.logOut,
   }) : super(key: key);
   final DriveHelper driveHelper;
   final String logFileID;
   final PackageInfo packageInfo;
+  final VoidCallback logOut;
 
   @override
   HomePageState createState() => HomePageState();
@@ -71,14 +72,11 @@ class HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: SizedBox(
-                              height: _getDrawerWidth() / 2,
-                              width: _getDrawerWidth() / 2,
-                              child: widget.driveHelper.avatar,
-                            ),
+                          SizedBox.square(
+                            dimension: _getDrawerWidth() / 2,
+                            child: widget.driveHelper.avatar,
                           ),
+                          Container(height: 10),
                           FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
@@ -102,8 +100,7 @@ class HomePageState extends State<HomePage> {
                     title: const Text("Log out"),
                     onTap: () async {
                       await widget.driveHelper.signOut();
-                      // ignore: use_build_context_synchronously
-                      Phoenix.rebirth(context);
+                      widget.logOut();
                     },
                   ),
                   ListTile(
@@ -111,7 +108,7 @@ class HomePageState extends State<HomePage> {
                     title: const Text("Access file"),
                     onTap: () async => await launchUrl(
                       Uri.parse(
-                          "https://docs.google.com/spreadsheets/d/${widget.logFileID}/"),
+                          "https://docs.google.com/spreadsheets/d/${widget.logFileID}"),
                       mode: LaunchMode.externalApplication,
                     ),
                   ),
@@ -198,6 +195,8 @@ class HomePageState extends State<HomePage> {
                           return "Too high";
                         } else if (val < 100) {
                           return "Too low";
+                        } else {
+                          return null;
                         }
                       } else {
                         return "Enter a value";
@@ -226,6 +225,8 @@ class HomePageState extends State<HomePage> {
                           return "Too high";
                         } else if (val < 60) {
                           return "Too low";
+                        } else {
+                          return null;
                         }
                       } else {
                         return "Enter a value";

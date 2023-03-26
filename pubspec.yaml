@@ -6,28 +6,31 @@ publish_to: "none"
 version: 1.4.1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.19.4 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter # Flutter SDK
   intl: ^0.18.0 # For datetime formatting
-  url_launcher: ^6.1.8 # For opening the log file
+  url_launcher: ^6.1.9 # For opening the log file
   package_info_plus: ^3.0.2 # For getting the app version
   google_fonts: ^4.0.3 # For monospaced error font
   animated_check: ^1.0.5 # For animated checkmark
   drive_helper: ^1.4.0 # For Google Drive
-  flutter_phoenix: ^1.1.0 # For restarting the app
+  flutter_phoenix: ^1.1.1 # For restarting the app
+  animations: ^2.0.7 # For Material animations
 
 dev_dependencies:
   flutter_lints: ^2.0.1
-  flutter_launcher_icons: ^0.11.0
+  icons_launcher: ^2.1.0
 
-flutter_icons:
-  android: true
-  ios: true
+icons_launcher:
   image_path: "assets/Icon_298x298.png"
-  adaptive_icon_background: E0E0D9
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
 
 flutter:
   uses-material-design: true
